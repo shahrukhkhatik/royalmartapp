@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Dimensions, SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Dimensions, SafeAreaView, Alert } from 'react-native';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+  const [cartItems, setCartItems] = useState([]);
+
   const featuredCategories = [
     { id: 1, name: 'Fruits & Vegetables', image: 'https://www.slideegg.com/image/catalog/86984-fruit-presentation-powerpoint.png' },
     { id: 2, name: 'Dairy & Eggs', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
     { id: 3, name: 'Bakery', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
     { id: 4, name: 'Ice Cream', image: 'https://mir-s3-cdn-cf.behance.net/project_modules/fs/cca0d391757687.5e3a07d29c171.png' },
     { id: 5, name: 'Snacks', image: 'https://www.balajiwafers.com/cdn/shop/files/Category-Namkeen-Default.jpg?v=1745240404' },
-    // { id: 6, name: 'Meat & Fish', image: 'https://images.unsplash.com/photo-1599457387924-5227cef03613?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
   ];
 
   const allCategories = [
@@ -37,10 +39,66 @@ const HomeScreen = ({ navigation }) => {
     { id: 4, name: 'Orange Juice', price: '₹120', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
   ];
 
+  // Load cart items from AsyncStorage on component mount
+  useEffect(() => {
+    loadCartItems();
+  }, []);
+
+  // Use useFocusEffect to refresh cart items when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadCartItems();
+    }, [])
+  );
+
+  // Save cart items to AsyncStorage whenever cartItems changes
+  useEffect(() => {
+    saveCartItems();
+  }, [cartItems]);
+
+  const loadCartItems = async () => {
+    try {
+      const savedCartItems = await AsyncStorage.getItem('cartItems');
+      if (savedCartItems !== null) {
+        setCartItems(JSON.parse(savedCartItems));
+      } else {
+        setCartItems([]);
+      }
+    } catch (error) {
+      console.error('Error loading cart items:', error);
+    }
+  };
+
+  const saveCartItems = async () => {
+    try {
+      await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cart items:', error);
+    }
+  };
+
+  const addToCart = (product) => {
+    const existingItem = cartItems.find(item => item.id === product.id);
+
+    if (existingItem) {
+      // If product already exists in cart, increase quantity
+      setCartItems(cartItems.map(item =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      // If product is new to cart, add it with quantity 1
+      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+    }
+
+    // Alert.alert('Success', `${product.name} added to cart!`);
+  };
+
   // Auto slider effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) => 
+      setCurrentSlide((prevSlide) =>
         prevSlide === featuredCategories.length - 1 ? 0 : prevSlide + 1
       );
     }, 3000); // Change slide every 3 seconds
@@ -50,61 +108,32 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Royal Kirana" />
-      
-      <ScrollView style={styles.content}>
-        {/* Hero Banner */}
-        <View style={styles.heroBanner}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' }}
-            style={styles.heroImage}
-          />
-          <View style={styles.heroTextContainer}>
-            <Text style={styles.heroTitle}>Summer Sale!</Text>
-            <Text style={styles.heroSubtitle}>Up to 50% off on fresh produce</Text>
-          </View>
-        </View>
+      <Header
+        title="Royal Kirana"
+        showCart={true}
+        cartItemCount={cartItems.reduce((total, item) => total + item.quantity, 0)}
+      />
 
+      <ScrollView style={styles.content}>
         {/* Featured Categories with Sidebar Toggle */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Shop by Category</Text>
-            <TouchableOpacity 
-              style={styles.viewAllButton}
-              onPress={() => setSidebarVisible(true)}
-            >
-              <Text style={styles.viewAllText}>View All</Text>
-            </TouchableOpacity>
+            {/* <Text style={styles.sectionTitle}>Shop by Category</Text> */}
           </View>
-          
+
           {/* Slider for categories */}
           <View style={styles.sliderContainer}>
             <View style={styles.slider}>
               {featuredCategories.map((category, index) => (
-                <TouchableOpacity 
-                  key={category.id} 
+                <TouchableOpacity
+                  key={category.id}
                   style={[
                     styles.categoryCard,
                     { display: index === currentSlide ? 'flex' : 'none' }
                   ]}
-                  onPress={() => navigation.navigate('Categories')}
                 >
                   <Image source={{ uri: category.image }} style={styles.categoryImage} />
-                  <Text style={styles.categoryName}>{category.name}</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-            
-            {/* Slider indicators */}
-            <View style={styles.sliderIndicators}>
-              {featuredCategories.map((_, index) => (
-                <View 
-                  key={index} 
-                  style={[
-                    styles.indicator,
-                    index === currentSlide ? styles.activeIndicator : styles.inactiveIndicator
-                  ]} 
-                />
               ))}
             </View>
           </View>
@@ -122,7 +151,10 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.productInfo}>
                   <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
                   <Text style={styles.productPrice}>{product.price}</Text>
-                  <TouchableOpacity style={styles.addToCartButton}>
+                  <TouchableOpacity
+                    style={styles.addToCartButton}
+                    onPress={() => addToCart(product)}
+                  >
                     <Text style={styles.addToCartText}>Add to Cart</Text>
                   </TouchableOpacity>
                 </View>
@@ -146,18 +178,18 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.sidebarContainer}>
             <View style={styles.sidebarHeader}>
               <Text style={styles.sidebarTitle}>All Categories</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setSidebarVisible(false)}
               >
                 <Ionicons name="close" size={28} color="#000" />
               </TouchableOpacity>
             </View>
-            
+
             <ScrollView style={styles.sidebarContent}>
               {allCategories.map(category => (
-                <TouchableOpacity 
-                  key={category.id} 
+                <TouchableOpacity
+                  key={category.id}
                   style={styles.sidebarItem}
                   onPress={() => {
                     setSidebarVisible(false);
@@ -216,7 +248,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section: {
-    padding: 16,
+    padding: 10, // Reduced from 16
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -224,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10, // Reduced from 16
   },
   sectionTitle: {
     fontSize: 20,
@@ -243,10 +275,12 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     alignItems: 'center',
+    marginTop: 0, // Added to reduce top margin
+    marginBottom: 0, // Added to reduce bottom margin
   },
   slider: {
     width: '100%',
-    height: 220,
+    height: 200, // Reduced from 220
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -256,9 +290,9 @@ const styles = StyleSheet.create({
   },
   categoryImage: {
     width: '100%',
-    height: 180,
+    height: 170, // Reduced from 180
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 8, // Reduced from 12
     resizeMode: 'cover',
   },
   categoryName: {
@@ -269,7 +303,7 @@ const styles = StyleSheet.create({
   sliderIndicators: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 16,
+    marginTop: 12, // Reduced from 16
   },
   indicator: {
     width: 8,

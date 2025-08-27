@@ -30,7 +30,7 @@ const ProfileScreen = ({ navigation }) => {
       <Header title="My Profile" showBackButton={false} />
       
       {/* Breadcrumb Navigation */}
-      <View style={styles.breadcrumbContainer}>
+      {/* <View style={styles.breadcrumbContainer}>
         <TouchableOpacity 
           style={styles.breadcrumbItem}
           onPress={() => navigation.navigate('Home')}
@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.breadcrumbItem}>
           <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Profile</Text>
         </View>
-      </View>
+      </View> */}
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* User Profile Section */}

@@ -27,7 +27,7 @@ const CategoryScreen = ({ navigation }) => {
       <Header title="Categories" showBackButton={false} />
       
       {/* Breadcrumb Navigation */}
-      <View style={styles.breadcrumbContainer}>
+      {/* <View style={styles.breadcrumbContainer}>
         <TouchableOpacity 
           style={styles.breadcrumbItem}
           onPress={() => navigation.navigate('Home')}
@@ -39,7 +39,7 @@ const CategoryScreen = ({ navigation }) => {
         <View style={styles.breadcrumbItem}>
           <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Categories</Text>
         </View>
-      </View>
+      </View> */}
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Bar */}

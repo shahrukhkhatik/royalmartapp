@@ -1,17 +1,45 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-const Header = ({ title, showBackButton = false, onBackPress, showCart = true }) => {
+// In your Header component
+const Header = ({ 
+  title, 
+  showBackButton = false, 
+  onBackPress, 
+  showCart = true, 
+  cartItemCount = 0, 
+}) => {
+
+  const navigation = useNavigation(); // Use the hook here
+
+  const handleCartPress = () => {
+    navigation.navigate('Cart');
+  };
+
+  const handleBackPress = () => {
+    if (onBackPress) {
+      onBackPress();
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  const handleMenuPress = () => {
+    // Add menu functionality here, e.g., opening a drawer
+    console.log('Menu pressed');
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.leftSection}>
         {showBackButton ? (
-          <TouchableOpacity onPress={onBackPress} style={styles.iconButton}>
+          <TouchableOpacity onPress={handleBackPress} style={styles.iconButton}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity onPress={handleMenuPress} style={styles.iconButton}>
             <Ionicons name="menu" size={24} color="black" />
           </TouchableOpacity>
         )}
@@ -23,11 +51,15 @@ const Header = ({ title, showBackButton = false, onBackPress, showCart = true })
       
       <View style={styles.rightSection}>
         {showCart && (
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity onPress={handleCartPress} style={styles.iconButton}>
             <Ionicons name="cart" size={24} color="black" />
-            <View style={styles.cartBadge}>
-              <Text style={styles.cartBadgeText}>3</Text>
-            </View>
+            {cartItemCount > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -41,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 15,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -50,7 +82,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    marginTop: 30,
+    marginTop: 40,
   },
   leftSection: {
     flex: 1,
