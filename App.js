@@ -8,6 +8,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import CategoryScreen from './src/screens/CategoryScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import CartScreen from './src/screens/CartScreen';
+import SubCategoryScreen from './src/screens/SubCategoryScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +23,8 @@ export default function App() {
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Categories') {
+              iconName = focused ? 'list' : 'list-outline';
+            } else if (route.name === 'SubCategories') {
               iconName = focused ? 'list' : 'list-outline';
             } else if (route.name === 'Profile') {
               iconName = focused ? 'person' : 'person-outline';
@@ -43,6 +46,11 @@ export default function App() {
         <Tab.Screen
           name="Categories"
           component={CategoryScreen}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="SubCategories"
+          component={SubCategoryScreen}
           options={{ headerShown: false }}
         />
         <Tab.Screen

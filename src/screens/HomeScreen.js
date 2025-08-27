@@ -33,11 +33,22 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const popularProducts = [
-    { id: 1, name: 'Organic Wheat', price: '₹199', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGs48QqBWanDgJnNQVsUoUhDEv0PWRFbMMw&s' },
-    { id: 2, name: 'Fresh Milk', price: '₹60', image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-    { id: 3, name: 'Whole Wheat Bread', price: '₹45', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-    { id: 4, name: 'Orange Juice', price: '₹120', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-  ];
+  { id: 1, name: 'Organic Wheat', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGs48QqBWanDgJnNQVsUoUhDEv0PWRFbMMw&s' },
+  { id: 2, name: 'Fresh Milk', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40148717_4-akshayakalpa-amrutha-a2-farm-fresh-milk-organic.jpg' },
+  { id: 3, name: 'Whole Wheat Bread', category: 'Bakery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+  { id: 4, name: 'Orange Juice', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+  { id: 5, name: 'Basmati Rice', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW2bcJj8jgiZ9THfbu_1LfQimB_t3hl_yejQ&s' },
+  { id: 6, name: 'Honey', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9vidPJnZtlT7If35oElKJN6GjltGJMI4Nw&s' },
+  { id: 7, name: 'Tomato Ketchup', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/xl/40029538_39-kissan-fresh-tomato-ketchup.jpg' },
+  { id: 8, name: 'Potato Chips', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZIzxgXwrWGSUq58no9DKLNQQFrg-MhZyoXw&s' },
+  { id: 9, name: 'Cooking Oil', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTRaHF6kdjaJHnlR-VSj6Lrz1Qm6p-yeXzEw&s' },
+  { id: 10, name: 'Butter', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://5.imimg.com/data5/QS/RE/GLADMIN-45635670/amul-butter-500x500.png' },
+  { id: 11, name: 'Pasta', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40180804_7-maggi-pazzta-masala-penne-family-saver-pack.jpg' },
+  { id: 12, name: 'Tea', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cdn.shopify.com/s/files/1/1498/3056/files/homeDarjImg.jpg?v=1629298964' },
+  { id: 13, name: 'Coffee', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images-cdn.ubuy.co.in/67470f2347239015f14dd59c-nescafe-clasico-instant-coffee.jpg' },
+  { id: 14, name: 'Biscuits', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_304/NI_CATALOG/IMAGES/CIW/2025/4/21/6405bd22-5117-4ac9-928b-8ed0198ce4cf_2405_1.png' },
+  { id: 15, name: 'Shampoo', category: 'Personal Care', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/hds/hds94959/y/24.jpg' },
+];
 
   // Load cart items from AsyncStorage on component mount
   useEffect(() => {
@@ -95,6 +106,36 @@ const HomeScreen = ({ navigation }) => {
     // Alert.alert('Success', `${product.name} added to cart!`);
   };
 
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      // If quantity becomes 0, remove the item from cart
+      removeFromCart(productId);
+      return;
+    }
+
+    const updatedItems = cartItems.map(item =>
+      item.id === productId ? { ...item, quantity: newQuantity } : item
+    );
+
+    setCartItems(updatedItems);
+  };
+
+  const removeFromCart = (productId) => {
+    const updatedItems = cartItems.filter(item => item.id !== productId);
+    setCartItems(updatedItems);
+  };
+
+  // Check if a product is in the cart
+  const isProductInCart = (productId) => {
+    return cartItems.some(item => item.id === productId);
+  };
+
+  // Get quantity of a product in cart
+  const getProductQuantity = (productId) => {
+    const item = cartItems.find(item => item.id === productId);
+    return item ? item.quantity : 0;
+  };
+
   // Auto slider effect
   useEffect(() => {
     const interval = setInterval(() => {
@@ -141,30 +182,81 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Popular Products */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Popular Products</Text>
-          <View style={styles.productGrid}>
-            {popularProducts.map(product => (
-              <TouchableOpacity key={product.id} style={styles.productCard}>
-                <View style={styles.productImageContainer}>
-                  <Image source={{ uri: product.image }} style={styles.productImage} />
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Popular Products</Text>
+            <TouchableOpacity style={styles.viewAllButton}>
+              <Text style={styles.viewAllText}>View All</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.popularProductsContainer}>
+            {popularProducts.map(product => {
+              const inCart = isProductInCart(product.id);
+              const quantity = getProductQuantity(product.id);
+
+              return (
+                <View key={product.id} style={styles.popularProductCard}>
+                  <View style={styles.productBadge}>
+                    <Text style={styles.productBadgeText}>Popular</Text>
+                  </View>
+
+                  <View style={styles.productCategoryContainer}>
+                    <Text style={styles.productCategoryText}>{product.category}</Text>
+                  </View>
+
+                  <View style={styles.productImageContainer}>
+                    <Image source={{ uri: product.image }} style={styles.popularProductImage} />
+                  </View>
+
+                  <Text style={styles.popularProductName}>{product.name}</Text>
+
+                  {product.originalPrice ? (
+                    <View style={styles.priceContainer}>
+                      <Text style={styles.originalPrice}>{product.originalPrice}</Text>
+                      <Text style={styles.discountedPrice}>{product.price}</Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.productPrice}>{product.price}</Text>
+                  )}
+
+                  {product.discount ? (
+                    <Text style={styles.discountText}>{product.discount}</Text>
+                  ) : null}
+
+                  {inCart ? (
+                    <View style={styles.quantityContainer}>
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => updateQuantity(product.id, quantity - 1)}
+                      >
+                        <Ionicons name="remove" size={16} color="#374151" />
+                      </TouchableOpacity>
+
+                      <Text style={styles.quantityText}>{quantity}</Text>
+
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => updateQuantity(product.id, quantity + 1)}
+                      >
+                        <Ionicons name="add" size={16} color="#374151" />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.addToCartButton}
+                      onPress={() => addToCart(product)}
+                    >
+                      <Text style={styles.addToCartText}>Add to Cart</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
-                <View style={styles.productInfo}>
-                  <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-                  <Text style={styles.productPrice}>{product.price}</Text>
-                  <TouchableOpacity
-                    style={styles.addToCartButton}
-                    onPress={() => addToCart(product)}
-                  >
-                    <Text style={styles.addToCartText}>Add to Cart</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            ))}
+              );
+            })}
           </View>
         </View>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </ScrollView>
 
       {/* Category Sidebar Modal */}
@@ -248,7 +340,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section: {
-    padding: 10, // Reduced from 16
+    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -256,7 +348,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10, // Reduced from 16
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 20,
@@ -275,12 +367,12 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     alignItems: 'center',
-    marginTop: 0, // Added to reduce top margin
-    marginBottom: 0, // Added to reduce bottom margin
+    marginTop: 0,
+    marginBottom: 0,
   },
   slider: {
     width: '100%',
-    height: 200, // Reduced from 220
+    height: 200,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -290,9 +382,9 @@ const styles = StyleSheet.create({
   },
   categoryImage: {
     width: '100%',
-    height: 170, // Reduced from 180
+    height: 170,
     borderRadius: 8,
-    marginBottom: 8, // Reduced from 12
+    marginBottom: 8,
     resizeMode: 'cover',
   },
   categoryName: {
@@ -303,7 +395,7 @@ const styles = StyleSheet.create({
   sliderIndicators: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 12, // Reduced from 16
+    marginTop: 12,
   },
   indicator: {
     width: 8,
@@ -318,16 +410,17 @@ const styles = StyleSheet.create({
   inactiveIndicator: {
     backgroundColor: '#ccc',
   },
-  productGrid: {
+  popularProductsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  productCard: {
+  popularProductCard: {
     width: '48%',
     backgroundColor: '#fff',
     borderRadius: 12,
     marginBottom: 16,
+    padding: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -339,51 +432,116 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: '#f0f0f0',
+    position: 'relative',
+  },
+  productBadge: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  productBadgeText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  productCategoryContainer: {
+    marginTop: 20,
+    marginBottom: 5,
+  },
+  productCategoryText: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
   },
   productImageContainer: {
     width: '100%',
-    height: 140,
-    padding: 10,
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f9f9f9',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    marginBottom: 10,
   },
-  productImage: {
-    width: 120,
-    height: 120,
+  popularProductImage: {
+    width: '80%',
+    height: '100%',
     resizeMode: 'contain',
   },
-  productInfo: {
-    padding: 12,
-    width: '100%',
-    alignItems: 'center',
-  },
-  productName: {
+  popularProductName: {
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 6,
+    fontWeight: '600',
+    marginBottom: 8,
     textAlign: 'center',
-    height: 40,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#999',
+    textDecorationLine: 'line-through',
+    marginRight: 5,
+  },
+  discountedPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2ecc71',
   },
   productPrice: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#2ecc71',
+    marginBottom: 5,
+  },
+  discountText: {
+    fontSize: 12,
+    color: '#FF6B6B',
+    fontWeight: '500',
     marginBottom: 10,
   },
   addToCartButton: {
     backgroundColor: '#3498db',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderRadius: 6,
     alignItems: 'center',
+    // width: '100%',
   },
   addToCartText: {
     color: 'white',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    padding: 4,
+    width: '100%',
+    justifyContent: 'center',
+  },
+  quantityButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  quantityText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginHorizontal: 16,
+    minWidth: 20,
+    textAlign: 'center',
   },
   sidebarOverlay: {
     flex: 1,

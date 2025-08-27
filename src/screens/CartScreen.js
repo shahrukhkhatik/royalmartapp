@@ -152,7 +152,7 @@ const CartScreen = ({ navigation }) => {
       <Header title="Shopping Cart" showBackButton={true} onBackPress={() => navigation.goBack()} />
       
       {/* Breadcrumb Navigation */}
-      <View style={styles.breadcrumbContainer}>
+      {/* <View style={styles.breadcrumbContainer}>
         <TouchableOpacity 
           style={styles.breadcrumbItem}
           onPress={() => navigation.navigate('Home')}
@@ -164,7 +164,7 @@ const CartScreen = ({ navigation }) => {
         <View style={styles.breadcrumbItem}>
           <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Cart</Text>
         </View>
-      </View>
+      </View> */}
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Cart Items */}
@@ -269,7 +269,7 @@ const CartScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </ScrollView>
     </SafeAreaView>
   );

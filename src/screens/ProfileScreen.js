@@ -59,7 +59,7 @@ const ProfileScreen = ({ navigation }) => {
           
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text>
+            {/* <Text style={styles.userEmail}>{user.email}</Text> */}
             <Text style={styles.userPhone}>{user.phone}</Text>
             
             <View style={styles.statsContainer}>
@@ -105,7 +105,7 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </ScrollView>
     </View>
   );

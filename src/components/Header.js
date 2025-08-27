@@ -8,15 +8,9 @@ const Header = ({
   title, 
   showBackButton = false, 
   onBackPress, 
-  showCart = true, 
-  cartItemCount = 0, 
 }) => {
 
   const navigation = useNavigation(); // Use the hook here
-
-  const handleCartPress = () => {
-    navigation.navigate('Cart');
-  };
 
   const handleBackPress = () => {
     if (onBackPress) {
@@ -29,6 +23,10 @@ const Header = ({
   const handleMenuPress = () => {
     // Add menu functionality here, e.g., opening a drawer
     console.log('Menu pressed');
+  };
+
+  const handleProfilePress = () => {
+    navigation.navigate('Profile');
   };
 
   return (
@@ -50,18 +48,9 @@ const Header = ({
       </View>
       
       <View style={styles.rightSection}>
-        {showCart && (
-          <TouchableOpacity onPress={handleCartPress} style={styles.iconButton}>
-            <Ionicons name="cart" size={24} color="black" />
-            {cartItemCount > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity onPress={handleProfilePress} style={styles.iconButton}>
+          <Ionicons name="person" size={24} color="black" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -103,22 +92,6 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 4,
     position: 'relative',
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    backgroundColor: 'tomato',
-    borderRadius: 10,
-    width: 18,
-    height: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cartBadgeText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
 });
 
