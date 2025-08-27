@@ -8,14 +8,14 @@ const CategoryScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   
   const categories = [
-    { id: 1, name: 'Fruits & Vegetables', count: 45, image: 'https://placehold.co/300x200/4CAF50/white?text=Fruits+%26+Veg' },
-    { id: 2, name: 'Dairy & Eggs', count: 32, image: 'https://placehold.co/300x200/2196F3/white?text=Dairy+%26+Eggs' },
-    { id: 3, name: 'Meat & Seafood', count: 28, image: 'https://placehold.co/300x200/E74C3C/white?text=Meat+%26+Fish' },
-    { id: 4, name: 'Bakery', count: 56, image: 'https://placehold.co/300x200/FF9800/white?text=Bakery' },
-    { id: 5, name: 'Beverages', count: 67, image: 'https://placehold.co/300x200/9C27B0/white?text=Beverages' },
-    { id: 6, name: 'Snacks', count: 89, image: 'https://placehold.co/300x200/FF5722/white?text=Snacks' },
-    { id: 7, name: 'Frozen Foods', count: 42, image: 'https://placehold.co/300x200/00BCD4/white?text=Frozen+Foods' },
-    { id: 8, name: 'Personal Care', count: 76, image: 'https://placehold.co/300x200/607D8B/white?text=Personal+Care' },
+    { id: 1, name: 'Fruits & Vegetables', count: 45, image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
+    { id: 2, name: 'Dairy & Eggs', count: 32, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
+    { id: 3, name: 'Meat & Seafood', count: 28, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf8EIoClymlf42TzPLVduBR99SESm6W4SyGA&s' },
+    { id: 4, name: 'Bakery', count: 56, image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
+    { id: 5, name: 'Beverages', count: 67, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
+    { id: 6, name: 'Snacks', count: 89, image: 'https://www.balajiwafers.com/cdn/shop/files/Category-Namkeen-Default.jpg?v=1745240404' },
+    { id: 7, name: 'Frozen Foods', count: 42, image: 'https://www.foodrepublic.com/img/gallery/the-worlds-first-frozen-foods-date-back-thousands-of-years/intro-1684964181.jpg' },
+    // { id: 8, name: 'Personal Care', count: 76, image: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
   ];
 
   const filteredCategories = categories.filter(category => 
@@ -26,7 +26,22 @@ const CategoryScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Header title="Categories" showBackButton={false} />
       
-      <ScrollView style={styles.content}>
+      {/* Breadcrumb Navigation */}
+      <View style={styles.breadcrumbContainer}>
+        <TouchableOpacity 
+          style={styles.breadcrumbItem}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Ionicons name="home-outline" size={16} color="#6b7280" />
+          <Text style={styles.breadcrumbText}>Home</Text>
+        </TouchableOpacity>
+        <Ionicons name="chevron-forward" size={14} color="#9ca3af" style={styles.breadcrumbArrow} />
+        <View style={styles.breadcrumbItem}>
+          <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Categories</Text>
+        </View>
+      </View>
+      
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
@@ -67,6 +82,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  // Breadcrumb Styles
+  breadcrumbContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#f9fafb',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  breadcrumbItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  breadcrumbText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  breadcrumbActive: {
+    color: '#3b82f6',
+    fontWeight: '500',
+  },
+  breadcrumbArrow: {
+    marginHorizontal: 8,
   },
   content: {
     flex: 1,

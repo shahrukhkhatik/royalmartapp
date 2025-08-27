@@ -9,43 +9,65 @@ const ProfileScreen = ({ navigation }) => {
     name: 'Rajesh Kumar',
     email: 'rajesh@example.com',
     phone: '+91 9876543210',
-    joinDate: 'January 2023',
+    joinDate: 'Jan 2023',
     orders: 12,
     rewards: 345,
   };
 
   const menuItems = [
-    { id: 1, icon: 'person', title: 'Personal Information', screen: 'PersonalInfo' },
-    { id: 2, icon: 'location', title: 'Addresses', screen: 'Addresses' },
-    { id: 3, icon: 'receipt', title: 'Order History', screen: 'Orders' },
-    { id: 4, icon: 'card', title: 'Payment Methods', screen: 'Payments' },
-    { id: 5, icon: 'star', title: 'My Reviews', screen: 'Reviews' },
-    { id: 6, icon: 'gift', title: 'Rewards & Offers', screen: 'Rewards' },
-    { id: 7, icon: 'settings', title: 'Settings', screen: 'Settings' },
-    { id: 8, icon: 'help-circle', title: 'Help & Support', screen: 'Support' },
+    { id: 1, icon: 'person-outline', title: 'Personal Information', screen: 'PersonalInfo' },
+    { id: 2, icon: 'location-outline', title: 'Addresses', screen: 'Addresses' },
+    { id: 3, icon: 'receipt-outline', title: 'Order History', screen: 'Orders' },
+    { id: 4, icon: 'card-outline', title: 'Payment Methods', screen: 'Payments' },
+    { id: 5, icon: 'star-outline', title: 'My Reviews', screen: 'Reviews' },
+    { id: 6, icon: 'gift-outline', title: 'Rewards & Offers', screen: 'Rewards' },
+    { id: 7, icon: 'settings-outline', title: 'Settings', screen: 'Settings' },
+    { id: 8, icon: 'help-circle-outline', title: 'Help & Support', screen: 'Support' },
   ];
 
   return (
     <View style={styles.container}>
       <Header title="My Profile" showBackButton={false} />
       
-      <ScrollView style={styles.content}>
+      {/* Breadcrumb Navigation */}
+      <View style={styles.breadcrumbContainer}>
+        <TouchableOpacity 
+          style={styles.breadcrumbItem}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Ionicons name="home-outline" size={16} color="#6b7280" />
+          <Text style={styles.breadcrumbText}>Home</Text>
+        </TouchableOpacity>
+        <Ionicons name="chevron-forward" size={14} color="#9ca3af" style={styles.breadcrumbArrow} />
+        <View style={styles.breadcrumbItem}>
+          <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Profile</Text>
+        </View>
+      </View>
+      
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* User Profile Section */}
         <View style={styles.profileSection}>
-          <Image 
-            source={{ uri: 'https://placehold.co/100x100/3498db/white?text=RK' }}
-            style={styles.profileImage}
-          />
+          <View style={styles.profileImageContainer}>
+            <Image 
+              source={{ uri: 'https://placehold.co/100x100/3b82f6/white?text=RK' }}
+              style={styles.profileImage}
+            />
+            <TouchableOpacity style={styles.editIcon}>
+              <Ionicons name="pencil" size={16} color="#fff" />
+            </TouchableOpacity>
+          </View>
+          
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
             <Text style={styles.userPhone}>{user.phone}</Text>
+            
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
                 <Text style={styles.statValue}>{user.orders}</Text>
                 <Text style={styles.statLabel}>Orders</Text>
               </View>
-              <View style={styles.statItem}>
+              <View style={[styles.statItem, styles.statDivider]}>
                 <Text style={styles.statValue}>{user.rewards}</Text>
                 <Text style={styles.statLabel}>Rewards</Text>
               </View>
@@ -60,17 +82,25 @@ const ProfileScreen = ({ navigation }) => {
         {/* Menu Items */}
         <View style={styles.menuSection}>
           {menuItems.map(item => (
-            <TouchableOpacity key={item.id} style={styles.menuItem}>
-              <Ionicons name={item.icon} size={24} color="#3498db" style={styles.menuIcon} />
+            <TouchableOpacity 
+              key={item.id} 
+              style={styles.menuItem}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <View style={styles.menuIconContainer}>
+                <Ionicons name={item.icon} size={22} color="#3b82f6" />
+              </View>
               <Text style={styles.menuText}>{item.title}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
+              <Ionicons name="chevron-forward" size={20} color="#d1d5db" />
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton}>
-          <Ionicons name="log-out" size={24} color="#e74c3c" style={styles.logoutIcon} />
+          <View style={styles.logoutIconContainer}>
+            <Ionicons name="log-out-outline" size={22} color="#ef4444" />
+          </View>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
@@ -84,95 +114,165 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8fafc',
+  },
+  // Breadcrumb Styles
+  breadcrumbContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#f9fafb',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  breadcrumbItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  breadcrumbText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  breadcrumbActive: {
+    color: '#3b82f6',
+    fontWeight: '500',
+  },
+  breadcrumbArrow: {
+    marginHorizontal: 8,
   },
   content: {
     flex: 1,
   },
   profileSection: {
-    flexDirection: 'row',
-    padding: 20,
-    backgroundColor: '#f8f9fa',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    marginBottom: 16,
+  },
+  profileImageContainer: {
+    position: 'relative',
+    marginBottom: 16,
   },
   profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 16,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
-  profileInfo: {
-    flex: 1,
+  editIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#3b82f6',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
     justifyContent: 'center',
   },
+  profileInfo: {
+    alignItems: 'center',
+    width: '100%',
+  },
   userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '700',
     marginBottom: 4,
+    color: '#1f2937',
   },
   userEmail: {
     fontSize: 14,
-    color: '#666',
+    color: '#6b7280',
     marginBottom: 2,
   },
   userPhone: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
+    color: '#6b7280',
+    marginBottom: 20,
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    width: '100%',
+    paddingHorizontal: 20,
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
+  },
+  statDivider: {
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#e5e7eb',
   },
   statValue: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c3e50',
+    fontWeight: '700',
+    color: '#3b82f6',
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#7f8c8d',
+    color: '#9ca3af',
   },
   menuSection: {
-    marginTop: 16,
-    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: 'hidden',
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 16,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ecf0f1',
+    borderBottomColor: '#f3f4f6',
   },
-  menuIcon: {
+  menuIconContainer: {
+    width: 36,
+    alignItems: 'center',
     marginRight: 16,
   },
   menuText: {
     flex: 1,
     fontSize: 16,
+    color: '#374151',
+    fontWeight: '500',
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20,
+    marginHorizontal: 16,
+    marginBottom: 24,
     padding: 16,
     backgroundColor: '#fef2f2',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#fee2e2',
   },
-  logoutIcon: {
-    marginRight: 8,
+  logoutIconContainer: {
+    marginRight: 12,
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#e74c3c',
+    fontWeight: '600',
+    color: '#ef4444',
   },
 });
 

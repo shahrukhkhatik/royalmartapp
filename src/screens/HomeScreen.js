@@ -1,50 +1,62 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Dimensions, SafeAreaView } from 'react-native';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   const featuredCategories = [
-    { id: 1, name: 'Fruits & Vegetables', image: 'https://placehold.co/150x150/4CAF50/white?text=Fruits+%26+Veg' },
-    { id: 2, name: 'Dairy & Eggs', image: 'https://placehold.co/150x150/2196F3/white?text=Dairy+%26+Eggs' },
-    { id: 3, name: 'Bakery', image: 'https://placehold.co/150x150/FF9800/white?text=Bakery' },
-    { id: 4, name: 'Beverages', image: 'https://placehold.co/150x150/9C27B0/white?text=Beverages' },
-    { id: 5, name: 'Snacks', image: 'https://placehold.co/150x150/E91E63/white?text=Snacks' },
-    { id: 6, name: 'Meat & Fish', image: 'https://placehold.co/150x150/F44336/white?text=Meat+%26+Fish' },
+    { id: 1, name: 'Fruits & Vegetables', image: 'https://www.slideegg.com/image/catalog/86984-fruit-presentation-powerpoint.png' },
+    { id: 2, name: 'Dairy & Eggs', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 3, name: 'Bakery', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 4, name: 'Ice Cream', image: 'https://mir-s3-cdn-cf.behance.net/project_modules/fs/cca0d391757687.5e3a07d29c171.png' },
+    { id: 5, name: 'Snacks', image: 'https://www.balajiwafers.com/cdn/shop/files/Category-Namkeen-Default.jpg?v=1745240404' },
+    // { id: 6, name: 'Meat & Fish', image: 'https://images.unsplash.com/photo-1599457387924-5227cef03613?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
   ];
 
   const allCategories = [
-    { id: 1, name: 'Fruits & Vegetables', icon: 'ios-apple' },
-    { id: 2, name: 'Dairy & Eggs', icon: 'ios-egg' },
-    { id: 3, name: 'Bakery', icon: 'ios-bread' },
-    { id: 4, name: 'Beverages', icon: 'ios-cafe' },
-    { id: 5, name: 'Snacks', icon: 'ios-fast-food' },
-    { id: 6, name: 'Meat & Fish', icon: 'ios-fish' },
-    { id: 7, name: 'Frozen Foods', icon: 'ios-snow' },
-    { id: 8, name: 'Personal Care', icon: 'ios-person' },
-    { id: 9, name: 'Cleaning Supplies', icon: 'ios-brush' },
-    { id: 10, name: 'Baby Care', icon: 'ios-body' },
+    { id: 1, name: 'Fruits & Vegetables', icon: 'apple' },
+    { id: 2, name: 'Dairy & Eggs', icon: 'egg' },
+    { id: 3, name: 'Bakery', icon: 'bread' },
+    { id: 4, name: 'Beverages', icon: 'cafe' },
+    { id: 5, name: 'Snacks', icon: 'fast-food' },
+    { id: 6, name: 'Meat & Fish', icon: 'fish' },
+    { id: 7, name: 'Frozen Foods', icon: 'snow' },
+    { id: 8, name: 'Personal Care', icon: 'person' },
+    { id: 9, name: 'Cleaning Supplies', icon: 'brush' },
+    { id: 10, name: 'Baby Care', icon: 'body' },
   ];
 
   const popularProducts = [
-    { id: 1, name: 'Gehu', price: '₹199', image: 'https://m.media-amazon.com/images/I/51SWuIREMsL._UF1000,1000_QL80_.jpg' },
-    { id: 2, name: 'Fresh Milk', price: '₹60', image: 'https://placehold.co/100x100/2196F3/white?text=Milk' },
-    { id: 3, name: 'Whole Wheat Bread', price: '₹45', image: 'https://placehold.co/100x100/FF9800/white?text=Bread' },
-    { id: 4, name: 'Orange Juice', price: '₹120', image: 'https://placehold.co/100x100/FF5722/white?text=Juice' },
+    { id: 1, name: 'Organic Wheat', price: '₹199', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGs48QqBWanDgJnNQVsUoUhDEv0PWRFbMMw&s' },
+    { id: 2, name: 'Fresh Milk', price: '₹60', image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 3, name: 'Whole Wheat Bread', price: '₹45', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 4, name: 'Orange Juice', price: '₹120', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
   ];
 
+  // Auto slider effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => 
+        prevSlide === featuredCategories.length - 1 ? 0 : prevSlide + 1
+      );
+    }, 3000); // Change slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Header title="Royal Kirana" />
       
       <ScrollView style={styles.content}>
         {/* Hero Banner */}
         <View style={styles.heroBanner}>
           <Image 
-            source={{ uri: 'https://placehold.co/400x200/FF6B6B/white?text=Special+Offers' }}
+            source={{ uri: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' }}
             style={styles.heroImage}
           />
           <View style={styles.heroTextContainer}>
@@ -64,18 +76,38 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-            {featuredCategories.map(category => (
-              <TouchableOpacity 
-                key={category.id} 
-                style={styles.categoryCard}
-                onPress={() => navigation.navigate('Categories')}
-              >
-                <Image source={{ uri: category.image }} style={styles.categoryImage} />
-                <Text style={styles.categoryName}>{category.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          
+          {/* Slider for categories */}
+          <View style={styles.sliderContainer}>
+            <View style={styles.slider}>
+              {featuredCategories.map((category, index) => (
+                <TouchableOpacity 
+                  key={category.id} 
+                  style={[
+                    styles.categoryCard,
+                    { display: index === currentSlide ? 'flex' : 'none' }
+                  ]}
+                  onPress={() => navigation.navigate('Categories')}
+                >
+                  <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                  <Text style={styles.categoryName}>{category.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {/* Slider indicators */}
+            <View style={styles.sliderIndicators}>
+              {featuredCategories.map((_, index) => (
+                <View 
+                  key={index} 
+                  style={[
+                    styles.indicator,
+                    index === currentSlide ? styles.activeIndicator : styles.inactiveIndicator
+                  ]} 
+                />
+              ))}
+            </View>
+          </View>
         </View>
 
         {/* Popular Products */}
@@ -118,7 +150,7 @@ const HomeScreen = ({ navigation }) => {
                 style={styles.closeButton}
                 onPress={() => setSidebarVisible(false)}
               >
-                <Ionicons name="ios-close" size={28} color="#000" />
+                <Ionicons name="close" size={28} color="#000" />
               </TouchableOpacity>
             </View>
             
@@ -134,14 +166,14 @@ const HomeScreen = ({ navigation }) => {
                 >
                   <Ionicons name={category.icon} size={22} color="#3498db" style={styles.sidebarIcon} />
                   <Text style={styles.sidebarItemText}>{category.name}</Text>
-                  <Ionicons name="ios-chevron-forward" size={18} color="#ccc" />
+                  <Ionicons name="chevron-forward" size={18} color="#ccc" />
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -209,24 +241,48 @@ const styles = StyleSheet.create({
     color: '#3498db',
     fontWeight: '500',
   },
-  horizontalScroll: {
-    marginHorizontal: -16,
+  sliderContainer: {
+    alignItems: 'center',
+  },
+  slider: {
+    width: '100%',
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryCard: {
-    width: 150,
-    marginRight: 16,
+    width: '100%',
     alignItems: 'center',
   },
   categoryImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 8,
+    width: '100%',
+    height: 180,
+    borderRadius: 8,
+    marginBottom: 12,
+    resizeMode: 'cover',
   },
   categoryName: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
+  },
+  sliderIndicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  activeIndicator: {
+    backgroundColor: '#3498db',
+    width: 12,
+  },
+  inactiveIndicator: {
+    backgroundColor: '#ccc',
   },
   productGrid: {
     flexDirection: 'row',
@@ -288,7 +344,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
-    // width: '100%',
     alignItems: 'center',
   },
   addToCartText: {
