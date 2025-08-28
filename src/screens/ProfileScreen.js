@@ -1,23 +1,78 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = ({ navigation }) => {
-  const user = {
-    name: 'Rajesh Kumar',
-    email: 'rajesh@example.com',
-    phone: '+91 9876543210',
-    joinDate: 'Jan 2023',
-    orders: 12,
-    rewards: 345,
+  const [user, setUser] = useState({
+    name: 'Guest User',
+    email: '',
+    phone: '',
+    joinDate: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+    orders: 0,
+    rewards: 0,
+  });
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUser(prevUser => ({
+          ...prevUser,
+          name: parsedData.name || 'Guest User',
+          phone: parsedData.mobileNumber || '',
+          joinDate: parsedData.loginTime 
+            ? new Date(parsedData.loginTime).toLocaleDateString('en-IN', { 
+                month: 'short', 
+                year: 'numeric' 
+              })
+            : prevUser.joinDate
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "Logout", 
+          onPress: async () => {
+            try {
+              // Remove user data from AsyncStorage
+              await AsyncStorage.removeItem('userData');
+              
+              // Use navigation.replace instead of reset for simpler navigation
+              navigation.replace('Login');
+            } catch (error) {
+              console.error('Error during logout:', error);
+              Alert.alert('Error', 'Failed to logout. Please try again.');
+            }
+          } 
+        }
+      ]
+    );
   };
 
   const menuItems = [
     { id: 1, icon: 'person-outline', title: 'Personal Information', screen: 'PersonalInfo' },
     { id: 2, icon: 'location-outline', title: 'Addresses', screen: 'Addresses' },
-    { id: 3, icon: 'receipt-outline', title: 'Order History', screen: 'Orders' },
+    { id: 3, icon: 'receipt-outline', title: 'Order History', screen: 'OrderHistory' },
     { id: 4, icon: 'card-outline', title: 'Payment Methods', screen: 'Payments' },
     { id: 5, icon: 'star-outline', title: 'My Reviews', screen: 'Reviews' },
     { id: 6, icon: 'gift-outline', title: 'Rewards & Offers', screen: 'Rewards' },
@@ -25,33 +80,29 @@ const ProfileScreen = ({ navigation }) => {
     { id: 8, icon: 'help-circle-outline', title: 'Help & Support', screen: 'Support' },
   ];
 
+  // Generate initials for profile image
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <View style={styles.container}>
       <Header title="My Profile" showBackButton={false} />
-      
-      {/* Breadcrumb Navigation */}
-      {/* <View style={styles.breadcrumbContainer}>
-        <TouchableOpacity 
-          style={styles.breadcrumbItem}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Ionicons name="home-outline" size={16} color="#6b7280" />
-          <Text style={styles.breadcrumbText}>Home</Text>
-        </TouchableOpacity>
-        <Ionicons name="chevron-forward" size={14} color="#9ca3af" style={styles.breadcrumbArrow} />
-        <View style={styles.breadcrumbItem}>
-          <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Profile</Text>
-        </View>
-      </View> */}
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* User Profile Section */}
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
-            <Image 
-              source={{ uri: 'https://placehold.co/100x100/3b82f6/white?text=RK' }}
-              style={styles.profileImage}
-            />
+            <View style={styles.profileImagePlaceholder}>
+              <Text style={styles.profileInitials}>
+                {getInitials(user.name)}
+              </Text>
+            </View>
             <TouchableOpacity style={styles.editIcon}>
               <Ionicons name="pencil" size={16} color="#fff" />
             </TouchableOpacity>
@@ -59,8 +110,11 @@ const ProfileScreen = ({ navigation }) => {
           
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>{user.name}</Text>
-            {/* <Text style={styles.userEmail}>{user.email}</Text> */}
-            <Text style={styles.userPhone}>{user.phone}</Text>
+            {user.phone ? (
+              <Text style={styles.userPhone}>{user.phone}</Text>
+            ) : (
+              <Text style={styles.userPhone}>Not provided</Text>
+            )}
             
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
@@ -85,7 +139,15 @@ const ProfileScreen = ({ navigation }) => {
             <TouchableOpacity 
               key={item.id} 
               style={styles.menuItem}
-              onPress={() => navigation.navigate(item.screen)}
+              onPress={() => {
+                if (item.screen === 'OrderHistory') {
+                  // Navigate to the OrderHistory tab
+                  navigation.navigate('OrderHistory');
+                } else {
+                  // For other screens, navigate normally
+                  navigation.navigate(item.screen);
+                }
+              }}
             >
               <View style={styles.menuIconContainer}>
                 <Ionicons name={item.icon} size={22} color="#3b82f6" />
@@ -97,7 +159,10 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
           <View style={styles.logoutIconContainer}>
             <Ionicons name="log-out-outline" size={22} color="#ef4444" />
           </View>
@@ -115,32 +180,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-  },
-  // Breadcrumb Styles
-  breadcrumbContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#f9fafb',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  breadcrumbItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  breadcrumbText: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginLeft: 4,
-  },
-  breadcrumbActive: {
-    color: '#3b82f6',
-    fontWeight: '500',
-  },
-  breadcrumbArrow: {
-    marginHorizontal: 8,
   },
   content: {
     flex: 1,
@@ -162,10 +201,18 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 16,
   },
-  profileImage: {
+  profileImagePlaceholder: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: '#3b82f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileInitials: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   editIcon: {
     position: 'absolute',
@@ -187,11 +234,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 4,
     color: '#1f2937',
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 2,
+    textAlign: 'center',
   },
   userPhone: {
     fontSize: 14,

@@ -72,7 +72,6 @@ const CartScreen = ({ navigation }) => {
             // Save to AsyncStorage
             try {
               await AsyncStorage.setItem('cartItems', JSON.stringify(updatedItems));
-            //   Alert.alert('Success', 'Item removed from cart');
             } catch (error) {
               console.error('Error saving cart items:', error);
               Alert.alert('Error', 'Failed to remove item');
@@ -95,7 +94,7 @@ const CartScreen = ({ navigation }) => {
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
       // Extract numeric price from string (remove ₹ symbol)
-      const price = parseInt(item.price.replace('₹', ''));
+      const price = parseInt(item.price.replace('₹', '').replace(/,/g, ''));
       return total + (price * item.quantity);
     }, 0);
   };
@@ -104,6 +103,51 @@ const CartScreen = ({ navigation }) => {
     const subtotal = calculateSubtotal();
     const discountAmount = (subtotal * discount) / 100;
     return subtotal - discountAmount;
+  };
+
+  const generateOrderId = () => {
+    return 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
+  };
+
+  const proceedToCheckout = async () => {
+    const subtotal = calculateSubtotal();
+    const total = calculateTotal();
+    const discountAmount = (subtotal * discount) / 100;
+    
+    const order = {
+      id: generateOrderId(),
+      date: Date.now(),
+      items: cartItems,
+      subtotal,
+      discount: discountAmount,
+      deliveryFee: 40,
+      total: total + 40,
+      status: 'Processing'
+    };
+    
+    // Save order to history
+    try {
+      const existingOrders = await AsyncStorage.getItem('orderHistory');
+      let orders = [];
+      
+      if (existingOrders !== null) {
+        orders = JSON.parse(existingOrders);
+      }
+      
+      orders.unshift(order); // Add new order at the beginning
+      await AsyncStorage.setItem('orderHistory', JSON.stringify(orders));
+      
+      // Clear cart
+      await AsyncStorage.removeItem('cartItems');
+      setCartItems([]);
+      
+      // Navigate to order confirmation
+      navigation.navigate('OrderHistory');
+      Alert.alert('Success', 'Your order has been placed successfully!');
+    } catch (error) {
+      console.error('Error saving order:', error);
+      Alert.alert('Error', 'Failed to place order. Please try again.');
+    }
   };
 
   const subtotal = calculateSubtotal();
@@ -115,21 +159,6 @@ const CartScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <Header title="Shopping Cart" showBackButton={true} onBackPress={() => navigation.goBack()} />
         
-        {/* Breadcrumb Navigation */}
-        {/* <View style={styles.breadcrumbContainer}>
-          <TouchableOpacity 
-            style={styles.breadcrumbItem}
-            onPress={() => navigation.navigate('Home')}
-          >
-            <Ionicons name="home-outline" size={16} color="#6b7280" />
-            <Text style={styles.breadcrumbText}>Home</Text>
-          </TouchableOpacity>
-          <Ionicons name="chevron-forward" size={14} color="#9ca3af" style={styles.breadcrumbArrow} />
-          <View style={styles.breadcrumbItem}>
-            <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Cart</Text>
-          </View>
-        </View> */}
-
         <View style={styles.emptyContainer}>
           <Ionicons name="cart-outline" size={80} color="#d1d5db" />
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
@@ -151,21 +180,6 @@ const CartScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <Header title="Shopping Cart" showBackButton={true} onBackPress={() => navigation.goBack()} />
       
-      {/* Breadcrumb Navigation */}
-      {/* <View style={styles.breadcrumbContainer}>
-        <TouchableOpacity 
-          style={styles.breadcrumbItem}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Ionicons name="home-outline" size={16} color="#6b7280" />
-          <Text style={styles.breadcrumbText}>Home</Text>
-        </TouchableOpacity>
-        <Ionicons name="chevron-forward" size={14} color="#9ca3af" style={styles.breadcrumbArrow} />
-        <View style={styles.breadcrumbItem}>
-          <Text style={[styles.breadcrumbText, styles.breadcrumbActive]}>Cart</Text>
-        </View>
-      </View> */}
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Cart Items */}
         <View style={styles.cartItemsContainer}>
@@ -197,7 +211,7 @@ const CartScreen = ({ navigation }) => {
               </View>
               
               <View style={styles.itemTotalContainer}>
-                <Text style={styles.itemTotal}>₹{parseInt(item.price.replace('₹', '')) * item.quantity}</Text>
+                <Text style={styles.itemTotal}>₹{parseInt(item.price.replace('₹', '').replace(/,/g, '')) * item.quantity}</Text>
                 <TouchableOpacity 
                   style={styles.removeButton}
                   onPress={() => removeItem(item.id)}
@@ -255,7 +269,7 @@ const CartScreen = ({ navigation }) => {
         {/* Checkout Button */}
         <TouchableOpacity 
           style={styles.checkoutButton}
-          onPress={() => navigation.navigate('Checkout')}
+          onPress={proceedToCheckout}
         >
           <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
         </TouchableOpacity>
@@ -279,32 +293,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-  },
-  // Breadcrumb Styles
-  breadcrumbContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#f9fafb',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  breadcrumbItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  breadcrumbText: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginLeft: 4,
-  },
-  breadcrumbActive: {
-    color: '#3b82f6',
-    fontWeight: '500',
-  },
-  breadcrumbArrow: {
-    marginHorizontal: 8,
   },
   content: {
     flex: 1,
