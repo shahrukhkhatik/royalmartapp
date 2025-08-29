@@ -171,7 +171,7 @@ const CartScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <Footer />
+        {/* <Footer /> */}
       </SafeAreaView>
     );
   }
@@ -282,8 +282,6 @@ const CartScreen = ({ navigation }) => {
           <Text style={styles.continueShoppingText}>Continue Shopping</Text>
         </TouchableOpacity>
 
-        {/* Footer */}
-        {/* <Footer /> */}
       </ScrollView>
     </SafeAreaView>
   );

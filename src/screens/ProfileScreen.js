@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, setIsLoggedIn }) => {
   const [user, setUser] = useState({
     name: 'Guest User',
     email: '',
@@ -57,8 +57,8 @@ const ProfileScreen = ({ navigation }) => {
               // Remove user data from AsyncStorage
               await AsyncStorage.removeItem('userData');
               
-              // Use navigation.replace instead of reset for simpler navigation
-              navigation.replace('Login');
+              // Update the login state to trigger re-render
+              setIsLoggedIn(false);
             } catch (error) {
               console.error('Error during logout:', error);
               Alert.alert('Error', 'Failed to logout. Please try again.');
@@ -70,14 +70,14 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const menuItems = [
-    { id: 1, icon: 'person-outline', title: 'Personal Information', screen: 'PersonalInfo' },
-    { id: 2, icon: 'location-outline', title: 'Addresses', screen: 'Addresses' },
-    { id: 3, icon: 'receipt-outline', title: 'Order History', screen: 'OrderHistory' },
-    { id: 4, icon: 'card-outline', title: 'Payment Methods', screen: 'Payments' },
-    { id: 5, icon: 'star-outline', title: 'My Reviews', screen: 'Reviews' },
-    { id: 6, icon: 'gift-outline', title: 'Rewards & Offers', screen: 'Rewards' },
-    { id: 7, icon: 'settings-outline', title: 'Settings', screen: 'Settings' },
-    { id: 8, icon: 'help-circle-outline', title: 'Help & Support', screen: 'Support' },
+    // { id: 1, icon: 'person-outline', title: 'Personal Information', screen: 'PersonalInfo' },
+    // { id: 2, icon: 'location-outline', title: 'Addresses', screen: 'Addresses' },
+    // { id: 3, icon: 'receipt-outline', title: 'Order History', screen: 'OrderHistory' },
+    // { id: 4, icon: 'card-outline', title: 'Payment Methods', screen: 'Payments' },
+    // { id: 5, icon: 'star-outline', title: 'My Reviews', screen: 'Reviews' },
+    // { id: 6, icon: 'gift-outline', title: 'Rewards & Offers', screen: 'Rewards' },
+    // { id: 7, icon: 'settings-outline', title: 'Settings', screen: 'Settings' },
+    // { id: 8, icon: 'help-circle-outline', title: 'Help & Support', screen: 'Support' },
   ];
 
   // Generate initials for profile image
@@ -92,7 +92,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header title="My Profile" showBackButton={false} />
+      <Header title="My Profile" showBackButton={true} />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* User Profile Section */}
@@ -170,7 +170,7 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Footer */}
-        {/* <Footer /> */}
+        <Footer />
       </ScrollView>
     </View>
   );

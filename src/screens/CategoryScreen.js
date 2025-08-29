@@ -31,7 +31,7 @@ const CategoryScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header title="Categories" showBackButton={false} />
+      <Header title="Categories" showBackButton={true} />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Bar */}

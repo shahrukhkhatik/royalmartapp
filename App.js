@@ -16,7 +16,7 @@ import LoginScreen from './src/screens/LoginScreen';
 const Tab = createBottomTabNavigator();
 
 // Main Tab Navigator
-function MainTabNavigator() {
+function MainTabNavigator({ setIsLoggedIn }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -39,8 +39,11 @@ function MainTabNavigator() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: 'rgb(255, 107, 107)',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          height: 80,
+        }
       })}
     >
       <Tab.Screen
@@ -63,12 +66,13 @@ function MainTabNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
         options={{
           headerShown: false,
           tabBarItemStyle: { display: 'none' },
         }}
-      />
+      >
+        {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Cart"
         component={CartScreen}
@@ -109,11 +113,10 @@ export default function App() {
     return null; // Or a loading screen
   }
 
-  // Simple conditional rendering without Stack Navigator
   return (
     <NavigationContainer>
       {isLoggedIn ? (
-        <MainTabNavigator />
+        <MainTabNavigator setIsLoggedIn={setIsLoggedIn} />
       ) : (
         <LoginScreen setIsLoggedIn={setIsLoggedIn} />
       )}

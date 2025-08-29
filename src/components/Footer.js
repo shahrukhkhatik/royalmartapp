@@ -13,9 +13,9 @@ const Footer = () => {
     <View style={styles.footer}>
       <View style={styles.footerContent}>
         <Text style={styles.footerHeading}>Royal Kirana Store</Text>
-        <Text style={styles.footerText}>Your one-stop shop for all grocery needs</Text>
+        {/* <Text style={styles.footerText}>Your one-stop shop for all grocery needs</Text> */}
         
-        <View style={styles.footerLinks}>
+        {/* <View style={styles.footerLinks}>
           <TouchableOpacity onPress={() => openURL('https://example.com/about')}>
             <Text style={styles.footerLink}>About Us</Text>
           </TouchableOpacity>
@@ -28,7 +28,7 @@ const Footer = () => {
           <TouchableOpacity onPress={() => openURL('https://example.com/terms')}>
             <Text style={styles.footerLink}>Terms of Service</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
         
         <View style={styles.socialIcons}>
           <TouchableOpacity 

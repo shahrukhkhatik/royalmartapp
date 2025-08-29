@@ -83,7 +83,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text style={styles.title}>Welcome</Text>
+            {/* <Text style={styles.title}>Welcome</Text> */}
             {/* <Text style={styles.subtitle}>Please enter your details to continue</Text> */}
           </View>
 

@@ -1,29 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, Animated, Easing, Dimensions } from 'react-native';
 import Header from '../components/Header';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width } = Dimensions.get('window');
 
 const OrderHistoryScreen = ({ navigation }) => {
   const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [animatedValue] = useState(new Animated.Value(0));
+
+  // Sample data for demonstration
+  const sampleOrders = [
+    {
+      id: 'ord-12345',
+      date: Date.now() - 86400000 * 2,
+      status: 'Delivered',
+      items: [
+        { id: '1', name: 'Premium Wireless Headphones', price: 8999, quantity: 1, image: 'https://via.placeholder.com/150/3B82F6/FFFFFF?text=H' },
+        { id: '2', name: 'Phone Case', price: 599, quantity: 2, image: 'https://via.placeholder.com/150/10B981/FFFFFF?text=P' }
+      ],
+      subtotal: 10197,
+      shipping: 99,
+      tax: 918,
+      total: 11214
+    },
+    {
+      id: 'ord-67890',
+      date: Date.now() - 86400000 * 5,
+      status: 'Processing',
+      items: [
+        { id: '3', name: 'Smart Watch', price: 12999, quantity: 1, image: 'https://via.placeholder.com/150/EF4444/FFFFFF?text=W' },
+        { id: '4', name: 'Charging Cable', price: 399, quantity: 1, image: 'https://via.placeholder.com/150/F59E0B/FFFFFF?text=C' }
+      ],
+      subtotal: 13398,
+      shipping: 99,
+      tax: 1206,
+      total: 14703
+    },
+    {
+      id: 'ord-54321',
+      date: Date.now() - 86400000 * 10,
+      status: 'Cancelled',
+      items: [
+        { id: '5', name: 'Fitness Tracker', price: 4999, quantity: 1, image: 'https://via.placeholder.com/150/8B5CF6/FFFFFF?text=F' }
+      ],
+      subtotal: 4999,
+      shipping: 99,
+      tax: 450,
+      total: 5548
+    }
+  ];
 
   // Load order history from AsyncStorage
   useEffect(() => {
     loadOrderHistory();
   }, []);
 
+  const animateIn = () => {
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  };
+
   const loadOrderHistory = async () => {
     try {
       const savedOrders = await AsyncStorage.getItem('orderHistory');
       if (savedOrders !== null) {
         setOrders(JSON.parse(savedOrders));
+      } else {
+        // Use sample data if no orders exist (for demo)
+        setOrders(sampleOrders);
       }
     } catch (error) {
       console.error('Error loading order history:', error);
+      // Use sample data if there's an error (for demo)
+      setOrders(sampleOrders);
     } finally {
       setLoading(false);
+      animateIn();
     }
   };
 
@@ -53,24 +114,62 @@ const OrderHistoryScreen = ({ navigation }) => {
     }
   };
 
-  const renderOrderItem = ({ item }) => {
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'Delivered': return 'checkmark-circle';
+      case 'Processing': return 'time';
+      case 'Cancelled': return 'close-circle';
+      default: return 'ellipse';
+    }
+  };
+
+  const filterOrders = () => {
+    if (activeFilter === 'all') return orders;
+    return orders.filter(order => order.status === activeFilter);
+  };
+
+  const renderOrderItem = ({ item, index }) => {
     const isExpanded = expandedOrderId === item.id;
+    const translateY = animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [100, 0],
+    });
+    const opacity = animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    });
     
     return (
-      <View style={styles.orderCard}>
-        <TouchableOpacity onPress={() => toggleOrder(item.id)}>
+      <Animated.View 
+        style={[
+          styles.orderCard,
+          {
+            opacity,
+            transform: [{ translateY }],
+          }
+        ]}
+      >
+        <TouchableOpacity 
+          onPress={() => toggleOrder(item.id)}
+          activeOpacity={0.7}
+        >
           <View style={styles.orderHeader}>
-            <View>
-              {/* <Text style={styles.orderId}>Order # {item.id}</Text> */}
-              <Text style={styles.orderId}>Includes Delivery Charge</Text>
+            <View style={styles.orderInfo}>
+              <Text style={styles.orderId}>Order #{item.id.slice(-5).toUpperCase()}</Text>
               <Text style={styles.orderDate}>{formatDate(item.date)}</Text>
             </View>
             <View style={styles.headerRight}>
-              {/* <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+              <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status)}15` }]}>
+                <Ionicons 
+                  name={getStatusIcon(item.status)} 
+                  size={14} 
+                  color={getStatusColor(item.status)} 
+                  style={styles.statusIcon}
+                />
                 <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
                   {item.status}
                 </Text>
-              </View> */}
+              </View>
               <Ionicons 
                 name={isExpanded ? "chevron-up" : "chevron-down"} 
                 size={20} 
@@ -81,11 +180,12 @@ const OrderHistoryScreen = ({ navigation }) => {
 
           <View style={styles.orderItemsPreview}>
             {item.items.slice(0, 3).map((product, index) => (
-              <Image 
-                key={index} 
-                source={{ uri: product.image }} 
-                style={styles.previewImage} 
-              />
+              <View key={index} style={styles.previewImageContainer}>
+                <Image 
+                  source={{ uri: product.image }} 
+                  style={styles.previewImage} 
+                />
+              </View>
             ))}
             {item.items.length > 3 && (
               <View style={styles.moreItems}>
@@ -96,20 +196,22 @@ const OrderHistoryScreen = ({ navigation }) => {
 
           <View style={styles.orderFooter}>
             <Text style={styles.itemsCount}>{item.items.length} item{item.items.length !== 1 ? 's' : ''}</Text>
-            <Text style={styles.orderTotal}>₹{item.total}</Text>
+            <Text style={styles.orderTotal}>₹{item.total.toLocaleString('en-IN')}</Text>
           </View>
         </TouchableOpacity>
 
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <Text style={styles.itemsTitle}>Items in this order:</Text>
+            <Text style={styles.itemsTitle}>Items in this order</Text>
             {item.items.map((product, index) => (
               <View key={index} style={styles.productItem}>
                 <Image source={{ uri: product.image }} style={styles.productImage} />
                 <View style={styles.productDetails}>
-                  <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.productPrice}>{product.price}</Text>
-                  <Text style={styles.productQuantity}>Quantity: {product.quantity}</Text>
+                  <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
+                  <View style={styles.productMeta}>
+                    <Text style={styles.productPrice}>₹{product.price.toLocaleString('en-IN')}</Text>
+                    <Text style={styles.productQuantity}>Qty: {product.quantity}</Text>
+                  </View>
                 </View>
               </View>
             ))}
@@ -117,33 +219,47 @@ const OrderHistoryScreen = ({ navigation }) => {
             <View style={styles.orderSummary}>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Subtotal</Text>
-                <Text style={styles.summaryValue}>₹{item.subtotal}</Text>
+                <Text style={styles.summaryValue}>₹{item.subtotal.toLocaleString('en-IN')}</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Shipping</Text>
-                <Text style={styles.summaryValue}>₹{item.shipping || 0}</Text>
+                <Text style={styles.summaryValue}>₹{item.shipping?.toLocaleString('en-IN') || 0}</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Tax</Text>
-                <Text style={styles.summaryValue}>₹{item.tax || 0}</Text>
+                <Text style={styles.summaryValue}>₹{item.tax?.toLocaleString('en-IN') || 0}</Text>
               </View>
               <View style={[styles.summaryRow, styles.totalRow]}>
                 <Text style={styles.totalLabel}>Total</Text>
-                <Text style={styles.totalValue}>₹{item.total}</Text>
+                <Text style={styles.totalValue}>₹{item.total.toLocaleString('en-IN')}</Text>
               </View>
+            </View>
+
+            <View style={styles.actionButtons}>
+              <TouchableOpacity style={[styles.actionButton, styles.reorderButton]}>
+                <Ionicons name="cart" size={16} color="#FFFFFF" />
+                <Text style={styles.reorderButtonText}>Reorder</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.actionButton, styles.detailsButton]}>
+                <Ionicons name="document-text" size={16} color="#3B82F6" />
+                <Text style={styles.detailsButtonText}>View Details</Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}
-      </View>
+      </Animated.View>
     );
   };
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header title="Order History" showBackButton={true} onBackPress={() => navigation.goBack()} />
+        <Header title="My Orders" showBackButton={true} onBackPress={() => navigation.goBack()} />
         <View style={styles.centerContent}>
-          <Text>Loading your orders...</Text>
+          <View style={styles.loadingAnimation}>
+            <Ionicons name="receipt" size={48} color="#3B82F6" />
+          </View>
+          <Text style={styles.loadingText}>Loading your orders...</Text>
         </View>
       </SafeAreaView>
     );
@@ -152,11 +268,13 @@ const OrderHistoryScreen = ({ navigation }) => {
   if (orders.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header title="Order History" showBackButton={true} onBackPress={() => navigation.goBack()} />
+        <Header title="My Orders" showBackButton={true} onBackPress={() => navigation.goBack()} />
         <View style={styles.emptyContainer}>
-          <Ionicons name="receipt-outline" size={80} color="#d1d5db" />
+          <View style={styles.emptyIcon}>
+            <Ionicons name="receipt-outline" size={80} color="#E5E7EB" />
+          </View>
           <Text style={styles.emptyTitle}>No orders yet</Text>
-          <Text style={styles.emptyText}>Your order history will appear here</Text>
+          <Text style={styles.emptyText}>Your order history will appear here once you make a purchase</Text>
           <TouchableOpacity 
             style={styles.continueShoppingButton}
             onPress={() => navigation.navigate('Home')}
@@ -170,10 +288,37 @@ const OrderHistoryScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Order History" showBackButton={true} onBackPress={() => navigation.goBack()} />
+      <Header title="My Orders" showBackButton={true} onBackPress={() => navigation.goBack()} />
+      
+      <View style={styles.filterContainer}>
+        <TouchableOpacity 
+          style={[styles.filterButton, activeFilter === 'all' && styles.activeFilter]}
+          onPress={() => setActiveFilter('all')}
+        >
+          <Text style={[styles.filterText, activeFilter === 'all' && styles.activeFilterText]}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterButton, activeFilter === 'Delivered' && styles.activeFilter]}
+          onPress={() => setActiveFilter('Delivered')}
+        >
+          <Text style={[styles.filterText, activeFilter === 'Delivered' && styles.activeFilterText]}>Delivered</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterButton, activeFilter === 'Processing' && styles.activeFilter]}
+          onPress={() => setActiveFilter('Processing')}
+        >
+          <Text style={[styles.filterText, activeFilter === 'Processing' && styles.activeFilterText]}>Processing</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterButton, activeFilter === 'Cancelled' && styles.activeFilter]}
+          onPress={() => setActiveFilter('Cancelled')}
+        >
+          <Text style={[styles.filterText, activeFilter === 'Cancelled' && styles.activeFilterText]}>Cancelled</Text>
+        </TouchableOpacity>
+      </View>
       
       <FlatList
-        data={orders}
+        data={filterOrders()}
         renderItem={renderOrderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
@@ -186,21 +331,48 @@ const OrderHistoryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F9FAFB',
   },
   listContainer: {
     padding: 16,
+    paddingBottom: 24,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    marginTop: 10,
+    gap: 1,
+  },
+  filterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+  },
+  activeFilter: {
+    backgroundColor: '#3B82F6',
+  },
+  filterText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  activeFilterText: {
+    color: '#FFFFFF',
   },
   orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
   },
   orderHeader: {
     flexDirection: 'row',
@@ -208,24 +380,34 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 16,
   },
+  orderInfo: {
+    flex: 1,
+  },
   headerRight: {
     alignItems: 'flex-end',
+    gap: 8,
   },
   orderId: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: '700',
+    color: '#111827',
     marginBottom: 4,
   },
   orderDate: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#6B7280',
+    fontWeight: '500',
   },
   statusBadge: {
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 16,
-    marginBottom: 8,
+    gap: 4,
+  },
+  statusIcon: {
+    marginRight: 4,
   },
   statusText: {
     fontSize: 12,
@@ -234,68 +416,80 @@ const styles = StyleSheet.create({
   orderItemsPreview: {
     flexDirection: 'row',
     marginBottom: 16,
+    gap: 8,
+  },
+  previewImageContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   previewImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-    marginRight: 8,
-    backgroundColor: '#f3f4f6',
+    width: '100%',
+    height: '100%',
   },
   moreItems: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   moreItemsText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6b7280',
+    color: '#6B7280',
   },
   orderFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
-    paddingTop: 12,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 16,
   },
   itemsCount: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#6B7280',
+    fontWeight: '500',
   },
   orderTotal: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#059669',
   },
   expandedContent: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: '#F3F4F6',
     paddingTop: 16,
   },
   itemsTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 12,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 16,
   },
   productItem: {
     flexDirection: 'row',
     marginBottom: 16,
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
     padding: 12,
+    alignItems: 'center',
   },
   productImage: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#F3F4F6',
   },
   productDetails: {
     flex: 1,
@@ -304,54 +498,93 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#374151',
-    marginBottom: 4,
+    marginBottom: 8,
+  },
+  productMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   productPrice: {
     fontSize: 14,
     fontWeight: '600',
     color: '#059669',
-    marginBottom: 4,
   },
   productQuantity: {
     fontSize: 12,
-    color: '#6b7280',
+    color: '#6B7280',
+    fontWeight: '500',
   },
   orderSummary: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: '#E5E7EB',
     paddingTop: 16,
+    gap: 8,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
   },
   summaryLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#6B7280',
+    fontWeight: '500',
   },
   summaryValue: {
     fontSize: 14,
     color: '#374151',
+    fontWeight: '500',
   },
   totalRow: {
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    paddingTop: 8,
-    marginTop: 8,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 12,
+    marginTop: 4,
   },
   totalLabel: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: '700',
+    color: '#111827',
   },
   totalValue: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#059669',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  reorderButton: {
+    backgroundColor: '#3B82F6',
+  },
+  detailsButton: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  reorderButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  detailsButtonText: {
+    color: '#3B82F6',
+    fontSize: 14,
+    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,
@@ -359,27 +592,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 40,
   },
+  emptyIcon: {
+    backgroundColor: '#F9FAFB',
+    padding: 24,
+    borderRadius: 100,
+    marginBottom: 24,
+  },
   emptyTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#374151',
-    marginTop: 20,
-    marginBottom: 8,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
-    marginBottom: 30,
+    color: '#6B7280',
+    marginBottom: 32,
     textAlign: 'center',
+    lineHeight: 24,
   },
   continueShoppingButton: {
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: '#3B82F6',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
   },
   continueShoppingText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -387,6 +632,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 16,
+  },
+  loadingAnimation: {
+    padding: 20,
+    backgroundColor: '#EFF6FF',
+    borderRadius: 50,
+    marginBottom: 16,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#6B7280',
+    fontWeight: '500',
   },
 });
 

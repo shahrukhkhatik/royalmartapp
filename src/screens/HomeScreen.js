@@ -33,7 +33,7 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const popularProducts = [
-  { id: 1, name: 'Organic Wheat', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGs48QqBWanDgJnNQVsUoUhDEv0PWRFbMMw&s' },
+  { id: 1, name: 'Organic Wheat', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkT7Jir3eQuxbUJRjtF1MJ87hmVxaf_XwCPQ&s' },
   { id: 2, name: 'Fresh Milk', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40148717_4-akshayakalpa-amrutha-a2-farm-fresh-milk-organic.jpg' },
   { id: 3, name: 'Whole Wheat Bread', category: 'Bakery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
   { id: 4, name: 'Orange Juice', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
@@ -197,7 +197,7 @@ const HomeScreen = ({ navigation }) => {
               return (
                 <View key={product.id} style={styles.popularProductCard}>
                   <View style={styles.productBadge}>
-                    <Text style={styles.productBadgeText}>Popular</Text>
+                    <Text style={styles.productBadgeText}>⭐</Text>
                   </View>
 
                   <View style={styles.productCategoryContainer}>
@@ -438,14 +438,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 10,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: 'white',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 6,
   },
   productBadgeText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   productCategoryContainer: {
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   addToCartButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: 'rgb(255, 107, 107)',
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderRadius: 6,
