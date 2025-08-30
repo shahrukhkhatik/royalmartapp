@@ -14,9 +14,9 @@ const HomeScreen = ({ navigation }) => {
   const featuredCategories = [
     { id: 1, name: 'Fruits & Vegetables', image: 'https://www.slideegg.com/image/catalog/86984-fruit-presentation-powerpoint.png' },
     { id: 2, name: 'Dairy & Eggs', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-    { id: 3, name: 'Bakery', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 3, name: 'Bakery', image: 'https://defencebakery.in/cdn/shop/files/Multi_Grain_Bread.jpg?v=1729155610' },
     { id: 4, name: 'Ice Cream', image: 'https://mir-s3-cdn-cf.behance.net/project_modules/fs/cca0d391757687.5e3a07d29c171.png' },
-    { id: 5, name: 'Snacks', image: 'https://www.balajiwafers.com/cdn/shop/files/Category-Namkeen-Default.jpg?v=1745240404' },
+    { id: 5, name: 'Snacks', image: 'https://sporked.com/wp-content/uploads/2023/10/LISTICLE_SALTY-SNACKS-UPDATE_HEADER-966x544.jpg' },
   ];
 
   const allCategories = [

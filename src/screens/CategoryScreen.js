@@ -12,8 +12,8 @@ const CategoryScreen = ({ navigation }) => {
     { id: 2, name: 'Dairy & Eggs', count: 32, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
     { id: 3, name: 'Meat & Seafood', count: 28, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf8EIoClymlf42TzPLVduBR99SESm6W4SyGA&s' },
     { id: 4, name: 'Bakery', count: 56, image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
-    { id: 5, name: 'Beverages', count: 67, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' },
-    { id: 6, name: 'Snacks', count: 89, image: 'https://www.balajiwafers.com/cdn/shop/files/Category-Namkeen-Default.jpg?v=1745240404' },
+    { id: 5, name: 'Drinks', count: 67, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIvIO4w375gYM64e-b3ySIx22F2SSi0_Qecg&s' },
+    { id: 6, name: 'Snacks', count: 89, image: 'https://sporked.com/wp-content/uploads/2023/10/LISTICLE_SALTY-SNACKS-UPDATE_HEADER-966x544.jpg' },
     { id: 7, name: 'Frozen Foods', count: 42, image: 'https://www.foodrepublic.com/img/gallery/the-worlds-first-frozen-foods-date-back-thousands-of-years/intro-1684964181.jpg' },
   ];
 
