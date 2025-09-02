@@ -13,6 +13,7 @@ import {
   Image
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';  // <-- Gradient Background
 
 const LoginScreen = ({ setIsLoggedIn }) => {
   const [name, setName] = useState('');
@@ -67,32 +68,37 @@ const LoginScreen = ({ setIsLoggedIn }) => {
         style={styles.keyboardAvoid}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.header}>
-            {/* Brand Logo Added Here */}
-            <Image
-              source={require('../../assets/images/Brand_Logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            {/* <Text style={styles.title}>Welcome</Text> */}
-            {/* <Text style={styles.subtitle}>Please enter your details to continue</Text> */}
-          </View>
 
+          {/* Gradient Header */}
+          <LinearGradient
+            colors={['#FF6A0087', '#FF3B3BF5']}
+            style={styles.headerGradient}
+          >
+            <View style={styles.header}>
+              <Image
+                source={require('../../assets/images/Brand_Logo.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              {/* <Text style={styles.headerText}>A whole grocery store{'\n'}at your fingertips</Text> */}
+            </View>
+          </LinearGradient>
+
+          {/* Form */}
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Full Name</Text>
               <TextInput
                 style={[styles.input, errors.name && styles.inputError]}
                 placeholder="Enter your full name"
                 value={name}
                 onChangeText={setName}
                 maxLength={50}
+                placeholderTextColor="#999"
               />
               {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Mobile Number</Text>
               <TextInput
                 style={[styles.input, errors.mobileNumber && styles.inputError]}
                 placeholder="Enter your 10-digit mobile number"
@@ -100,18 +106,33 @@ const LoginScreen = ({ setIsLoggedIn }) => {
                 onChangeText={setMobileNumber}
                 keyboardType="phone-pad"
                 maxLength={10}
+                placeholderTextColor="#999"
               />
               {errors.mobileNumber ? (
                 <Text style={styles.errorText}>{errors.mobileNumber}</Text>
               ) : null}
             </View>
 
+            {/* Sign In Button */}
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Continue</Text>
+              <Text style={styles.loginButtonText}>Sign In</Text>
             </TouchableOpacity>
 
-            <Text style={styles.termsText}>
-              By continuing, you agree to our Terms of Service and Privacy Policy
+            {/* Social Login Buttons */}
+            <View style={styles.socialContainer}>
+              <TouchableOpacity style={styles.socialButtonFB}>
+                <Text style={styles.socialText}>f</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.socialButtonGoogle}>
+                <Text style={styles.socialTextG}>G</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Sign Up Link */}
+            <Text style={styles.signupText}>
+              You have any problem ?{' '}
+              <Text style={styles.signupLink}>Contact us</Text>
             </Text>
           </View>
         </ScrollView>
@@ -130,39 +151,35 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    padding: 21,
+  },
+  headerGradient: {
+    height: 250,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 10,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
+    tintColor: '#ffffff',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+  headerText: {
     textAlign: 'center',
+    fontSize: 18,
+    color: '#fff',
+    marginTop: 10,
+    fontWeight: '600',
   },
   form: {
-    width: '100%',
+    padding: 30,
+    marginTop: 35,
   },
   inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    marginBottom: 28,
   },
   input: {
     borderWidth: 1,
@@ -170,7 +187,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
+    elevation: 2,
   },
   inputError: {
     borderColor: '#ff3b30',
@@ -181,22 +199,66 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   loginButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: 'rgb(255, 107, 107)',
+    borderRadius: 25,
+    paddingVertical: 15,
     alignItems: 'center',
     marginTop: 10,
+    elevation: 3,
+    width: '50%',
+    alignSelf: 'center',
   },
   loginButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#ffffff',
+    fontSize: 18,
     fontWeight: '600',
   },
-  termsText: {
-    fontSize: 12,
-    color: '#666',
+  socialContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  socialButtonFB: {
+    backgroundColor: '#3b5998',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    elevation: 2,
+  },
+  socialButtonGoogle: {
+    backgroundColor: '#fff',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  socialText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  socialTextG: {
+    color: '#DB4437',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  signupText: {
     textAlign: 'center',
-    marginTop: 20,
+    fontSize: 14,
+    color: '#666',
+  },
+  signupLink: {
+    color: '#ff3b3b',
+    fontWeight: '600',
   },
 });
 

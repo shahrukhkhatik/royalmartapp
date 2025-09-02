@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Sidebar from './Sidebar';
 
+
 const Header = ({ 
   title, 
   showBackButton = false, 
@@ -14,6 +15,7 @@ const Header = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarKey, setSidebarKey] = useState(0); // Add a key to force re-render
 
+
   const handleBackPress = () => {
     if (onBackPress) {
       onBackPress();
@@ -21,6 +23,7 @@ const Header = ({
       navigation.goBack();
     }
   };
+
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -30,9 +33,11 @@ const Header = ({
     }
   };
 
+
   const handleProfilePress = () => {
     navigation.navigate('Profile');
   };
+
 
   return (
     <>
@@ -40,22 +45,26 @@ const Header = ({
         <View style={styles.leftSection}>
           {showBackButton ? (
             <TouchableOpacity onPress={handleBackPress} style={styles.iconButton}>
-              <Ionicons name="arrow-back" size={24} color="black" />
+              {/* ✅ White Back Arrow */}
+              <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={toggleSidebar} style={styles.iconButton}>
-              <Ionicons name="menu" size={24} color="black" />
+              {/* ✅ White Menu Icon */}
+              <Ionicons name="menu" size={24} color="white" />
             </TouchableOpacity>
           )}
         </View>
         
         <View style={styles.centerSection}>
+          {/* ✅ White Title */}
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
         
         <View style={styles.rightSection}>
           <TouchableOpacity onPress={handleProfilePress} style={styles.iconButton}>
-            <Ionicons name="person" size={24} color="black" />
+            {/* ✅ White Profile Icon */}
+            <Ionicons name="person" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -69,6 +78,7 @@ const Header = ({
   );
 };
 
+
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -76,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 15,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(255, 107, 107)',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     elevation: 2,
@@ -102,11 +112,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'white',   // ✅ Title now white
   },
   iconButton: {
     padding: 4,
     position: 'relative',
   },
 });
+
 
 export default Header;
