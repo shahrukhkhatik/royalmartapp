@@ -150,7 +150,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header
-        title="Royal Kirana"
+        title="Royal Mart"
         showCart={true}
         cartItemCount={cartItems.reduce((total, item) => total + item.quantity, 0)}
       />

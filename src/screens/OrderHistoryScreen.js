@@ -13,48 +13,6 @@ const OrderHistoryScreen = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [animatedValue] = useState(new Animated.Value(0));
 
-  // Sample data for demonstration
-  const sampleOrders = [
-    {
-      id: 'ord-12345',
-      date: Date.now() - 86400000 * 2,
-      status: 'Delivered',
-      items: [
-        { id: '1', name: 'Premium Wireless Headphones', price: 8999, quantity: 1, image: 'https://via.placeholder.com/150/3B82F6/FFFFFF?text=H' },
-        { id: '2', name: 'Phone Case', price: 599, quantity: 2, image: 'https://via.placeholder.com/150/10B981/FFFFFF?text=P' }
-      ],
-      subtotal: 10197,
-      shipping: 99,
-      tax: 918,
-      total: 11214
-    },
-    {
-      id: 'ord-67890',
-      date: Date.now() - 86400000 * 5,
-      status: 'Processing',
-      items: [
-        { id: '3', name: 'Smart Watch', price: 12999, quantity: 1, image: 'https://via.placeholder.com/150/EF4444/FFFFFF?text=W' },
-        { id: '4', name: 'Charging Cable', price: 399, quantity: 1, image: 'https://via.placeholder.com/150/F59E0B/FFFFFF?text=C' }
-      ],
-      subtotal: 13398,
-      shipping: 99,
-      tax: 1206,
-      total: 14703
-    },
-    {
-      id: 'ord-54321',
-      date: Date.now() - 86400000 * 10,
-      status: 'Cancelled',
-      items: [
-        { id: '5', name: 'Fitness Tracker', price: 4999, quantity: 1, image: 'https://via.placeholder.com/150/8B5CF6/FFFFFF?text=F' }
-      ],
-      subtotal: 4999,
-      shipping: 99,
-      tax: 450,
-      total: 5548
-    }
-  ];
-
   // Load order history from AsyncStorage
   useEffect(() => {
     loadOrderHistory();
@@ -75,13 +33,9 @@ const OrderHistoryScreen = ({ navigation }) => {
       if (savedOrders !== null) {
         setOrders(JSON.parse(savedOrders));
       } else {
-        // Use sample data if no orders exist (for demo)
-        setOrders(sampleOrders);
       }
     } catch (error) {
       console.error('Error loading order history:', error);
-      // Use sample data if there's an error (for demo)
-      setOrders(sampleOrders);
     } finally {
       setLoading(false);
       animateIn();
@@ -196,7 +150,7 @@ const OrderHistoryScreen = ({ navigation }) => {
 
           <View style={styles.orderFooter}>
             <Text style={styles.itemsCount}>{item.items.length} item{item.items.length !== 1 ? 's' : ''}</Text>
-            <Text style={styles.orderTotal}>₹{item.total.toLocaleString('en-IN')}</Text>
+            <Text style={styles.orderTotal}>₹{(item.total ?? 0).toLocaleString('en-IN')}</Text>
           </View>
         </TouchableOpacity>
 
@@ -209,7 +163,7 @@ const OrderHistoryScreen = ({ navigation }) => {
                 <View style={styles.productDetails}>
                   <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
                   <View style={styles.productMeta}>
-                    <Text style={styles.productPrice}>₹{product.price.toLocaleString('en-IN')}</Text>
+                    <Text style={styles.productPrice}>₹{(product.price ?? 0).toLocaleString('en-IN')}</Text>
                     <Text style={styles.productQuantity}>Qty: {product.quantity}</Text>
                   </View>
                 </View>
@@ -219,19 +173,19 @@ const OrderHistoryScreen = ({ navigation }) => {
             <View style={styles.orderSummary}>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Subtotal</Text>
-                <Text style={styles.summaryValue}>₹{item.subtotal.toLocaleString('en-IN')}</Text>
+                <Text style={styles.summaryValue}>₹{(item.subtotal ?? 0).toLocaleString('en-IN')}</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Shipping</Text>
-                <Text style={styles.summaryValue}>₹{item.shipping?.toLocaleString('en-IN') || 0}</Text>
+                <Text style={styles.summaryValue}>₹{(item.shipping ?? 0).toLocaleString('en-IN')}</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Tax</Text>
-                <Text style={styles.summaryValue}>₹{item.tax?.toLocaleString('en-IN') || 0}</Text>
+                <Text style={styles.summaryValue}>₹{(item.tax ?? 0).toLocaleString('en-IN')}</Text>
               </View>
               <View style={[styles.summaryRow, styles.totalRow]}>
                 <Text style={styles.totalLabel}>Total</Text>
-                <Text style={styles.totalValue}>₹{item.total.toLocaleString('en-IN')}</Text>
+                <Text style={styles.totalValue}>₹{(item.total ?? 0).toLocaleString('en-IN')}</Text>
               </View>
             </View>
 
@@ -351,7 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
   },
   activeFilter: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: 'rgb(255, 107, 107)',
   },
   filterText: {
     fontSize: 13,
@@ -569,7 +523,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   reorderButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: 'rgb(255, 107, 107)',
   },
   detailsButton: {
     backgroundColor: '#EFF6FF',

@@ -1,16 +1,18 @@
-import React from 'react';
+// src/components/Header.js
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import Sidebar from './Sidebar';
 
-// In your Header component
 const Header = ({ 
   title, 
   showBackButton = false, 
   onBackPress, 
 }) => {
-
-  const navigation = useNavigation(); // Use the hook here
+  const navigation = useNavigation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarKey, setSidebarKey] = useState(0); // Add a key to force re-render
 
   const handleBackPress = () => {
     if (onBackPress) {
@@ -20,9 +22,12 @@ const Header = ({
     }
   };
 
-  const handleMenuPress = () => {
-    // Add menu functionality here, e.g., opening a drawer
-    console.log('Menu pressed');
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+    // Refresh sidebar when opening to get latest user data
+    if (!sidebarOpen) {
+      setSidebarKey(prev => prev + 1);
+    }
   };
 
   const handleProfilePress = () => {
@@ -30,29 +35,37 @@ const Header = ({
   };
 
   return (
-    <View style={styles.header}>
-      <View style={styles.leftSection}>
-        {showBackButton ? (
-          <TouchableOpacity onPress={handleBackPress} style={styles.iconButton}>
-            <Ionicons name="arrow-back" size={24} color="black" />
+    <>
+      <View style={styles.header}>
+        <View style={styles.leftSection}>
+          {showBackButton ? (
+            <TouchableOpacity onPress={handleBackPress} style={styles.iconButton}>
+              <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={toggleSidebar} style={styles.iconButton}>
+              <Ionicons name="menu" size={24} color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
+        
+        <View style={styles.centerSection}>
+          <Text style={styles.headerTitle}>{title}</Text>
+        </View>
+        
+        <View style={styles.rightSection}>
+          <TouchableOpacity onPress={handleProfilePress} style={styles.iconButton}>
+            <Ionicons name="person" size={24} color="black" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={handleMenuPress} style={styles.iconButton}>
-            <Ionicons name="menu" size={24} color="black" />
-          </TouchableOpacity>
-        )}
+        </View>
       </View>
       
-      <View style={styles.centerSection}>
-        <Text style={styles.headerTitle}>{title}</Text>
-      </View>
-      
-      <View style={styles.rightSection}>
-        <TouchableOpacity onPress={handleProfilePress} style={styles.iconButton}>
-          <Ionicons name="person" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-    </View>
+      <Sidebar 
+        key={sidebarKey} // This will force re-render when key changes
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
+    </>
   );
 };
 
@@ -72,6 +85,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     marginTop: 40,
+    zIndex: 10,
   },
   leftSection: {
     flex: 1,

@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <View style={styles.footer}>
       <View style={styles.footerContent}>
-        <Text style={styles.footerHeading}>Royal Kirana Store</Text>
+        <Text style={styles.footerHeading}>Royal Mart</Text>
         {/* <Text style={styles.footerText}>Your one-stop shop for all grocery needs</Text> */}
         
         {/* <View style={styles.footerLinks}>
@@ -58,7 +58,7 @@ const Footer = () => {
         </View>
         
         <Text style={styles.copyright}>
-          © {currentYear} Royal Kirana Store. All rights reserved.
+          © {currentYear} Royal Mart. All rights reserved.
         </Text>
       </View>
     </View>

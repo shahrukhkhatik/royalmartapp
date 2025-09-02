@@ -38,13 +38,13 @@ const CartScreen = ({ navigation }) => {
 
   const updateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
-    
+
     const updatedItems = cartItems.map(item =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     );
-    
+
     setCartItems(updatedItems);
-    
+
     // Save to AsyncStorage
     try {
       await AsyncStorage.setItem('cartItems', JSON.stringify(updatedItems));
@@ -68,7 +68,7 @@ const CartScreen = ({ navigation }) => {
           onPress: async () => {
             const updatedItems = cartItems.filter(item => item.id !== id);
             setCartItems(updatedItems);
-            
+
             // Save to AsyncStorage
             try {
               await AsyncStorage.setItem('cartItems', JSON.stringify(updatedItems));
@@ -91,11 +91,17 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  const parsePrice = (priceString) => {
+    if (typeof priceString !== 'string') return 0;
+    const numericString = priceString.replace('₹', '').replace(/,/g, '');
+    const price = parseInt(numericString, 10);
+    return isNaN(price) ? 0 : price;
+  };
+
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
-      // Extract numeric price from string (remove ₹ symbol)
-      const price = parseInt(item.price.replace('₹', '').replace(/,/g, ''));
-      return total + (price * item.quantity);
+      const price = parsePrice(item.price);
+      return total + (price * (item.quantity || 1));
     }, 0);
   };
 
@@ -113,7 +119,7 @@ const CartScreen = ({ navigation }) => {
     const subtotal = calculateSubtotal();
     const total = calculateTotal();
     const discountAmount = (subtotal * discount) / 100;
-    
+
     const order = {
       id: generateOrderId(),
       date: Date.now(),
@@ -124,23 +130,23 @@ const CartScreen = ({ navigation }) => {
       total: total + 40,
       status: 'Processing'
     };
-    
+
     // Save order to history
     try {
       const existingOrders = await AsyncStorage.getItem('orderHistory');
       let orders = [];
-      
+
       if (existingOrders !== null) {
         orders = JSON.parse(existingOrders);
       }
-      
+
       orders.unshift(order); // Add new order at the beginning
       await AsyncStorage.setItem('orderHistory', JSON.stringify(orders));
-      
+
       // Clear cart
       await AsyncStorage.removeItem('cartItems');
       setCartItems([]);
-      
+
       // Navigate to order confirmation
       navigation.navigate('OrderHistory');
       Alert.alert('Success', 'Your order has been placed successfully!');
@@ -158,7 +164,7 @@ const CartScreen = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <Header title="Shopping Cart" showBackButton={true} onBackPress={() => navigation.goBack()} />
-        
+
         <View style={styles.emptyContainer}>
           <Ionicons name="cart-outline" size={80} color="#d1d5db" />
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
@@ -176,55 +182,60 @@ const CartScreen = ({ navigation }) => {
     );
   }
 
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="Shopping Cart" showBackButton={true} onBackPress={() => navigation.goBack()} />
-      
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Cart Items */}
         <View style={styles.cartItemsContainer}>
-          {cartItems.map(item => (
-            <View key={item.id} style={styles.cartItem}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
-              
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
-                <Text style={styles.itemPrice}>{item.price}</Text>
-                
-                <View style={styles.quantityContainer}>
+          {cartItems.map(item => {
+            const price = parsePrice(item.price);
+            const quantity = item.quantity || 1;
+            return (
+              <View key={item.id} style={styles.cartItem}>
+                <Image source={{ uri: item.image }} style={styles.itemImage} />
+
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+                  <Text style={styles.itemPrice}>{item.price || '₹0'}</Text>
+
+                  <View style={styles.quantityContainer}>
+                    <TouchableOpacity 
+                      style={styles.quantityButton}
+                      onPress={() => updateQuantity(item.id, quantity - 1)}
+                    >
+                      <Ionicons name="remove" size={16} color="#374151" />
+                    </TouchableOpacity>
+
+                    <Text style={styles.quantityText}>{quantity}</Text>
+
+                    <TouchableOpacity 
+                      style={styles.quantityButton}
+                      onPress={() => updateQuantity(item.id, quantity + 1)}
+                    >
+                      <Ionicons name="add" size={16} color="#374151" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.itemTotalContainer}>
+                  <Text style={styles.itemTotal}>₹{price * quantity}</Text>
                   <TouchableOpacity 
-                    style={styles.quantityButton}
-                    onPress={() => updateQuantity(item.id, item.quantity - 1)}
+                    style={styles.removeButton}
+                    onPress={() => removeItem(item.id)}
                   >
-                    <Ionicons name="remove" size={16} color="#374151" />
-                  </TouchableOpacity>
-                  
-                  <Text style={styles.quantityText}>{item.quantity}</Text>
-                  
-                  <TouchableOpacity 
-                    style={styles.quantityButton}
-                    onPress={() => updateQuantity(item.id, item.quantity + 1)}
-                  >
-                    <Ionicons name="add" size={16} color="#374151" />
+                    <Ionicons name="trash-outline" size={20} color="#ef4444" />
                   </TouchableOpacity>
                 </View>
               </View>
-              
-              <View style={styles.itemTotalContainer}>
-                <Text style={styles.itemTotal}>₹{parseInt(item.price.replace('₹', '').replace(/,/g, '')) * item.quantity}</Text>
-                <TouchableOpacity 
-                  style={styles.removeButton}
-                  onPress={() => removeItem(item.id)}
-                >
-                  <Ionicons name="trash-outline" size={20} color="#ef4444" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
         {/* Coupon Section */}
-        <View style={styles.couponSection}>
+        {/* <View style={styles.couponSection}>
           <Text style={styles.sectionTitle}>Apply Coupon</Text>
           <View style={styles.couponInputContainer}>
             <TextInput
@@ -237,29 +248,29 @@ const CartScreen = ({ navigation }) => {
               <Text style={styles.applyButtonText}>Apply</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
 
         {/* Order Summary */}
         <View style={styles.summarySection}>
           <Text style={styles.sectionTitle}>Order Summary</Text>
-          
+
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
             <Text style={styles.summaryValue}>₹{subtotal}</Text>
           </View>
-          
+
           {discount > 0 && (
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Discount ({discount}%)</Text>
               <Text style={[styles.summaryValue, styles.discountText]}>-₹{discountAmount}</Text>
             </View>
           )}
-          
+
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Delivery Fee</Text>
             <Text style={styles.summaryValue}>₹40</Text>
           </View>
-          
+
           <View style={[styles.summaryRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalValue}>₹{total + 40}</Text>
@@ -286,6 +297,7 @@ const CartScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -421,7 +433,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   applyButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: 'rgb(255, 107, 107)',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
@@ -477,7 +489,7 @@ const styles = StyleSheet.create({
     color: '#059669',
   },
   checkoutButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: 'rgb(255, 107, 107)',
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 18,

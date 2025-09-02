@@ -50,19 +50,10 @@ const LoginScreen = ({ setIsLoggedIn }) => {
       };
 
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
-      
-      // Show success message
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            // Update login state
-            if (setIsLoggedIn) {
-              setIsLoggedIn(true);
-            }
-          }
-        }
-      ]);
+
+      if (setIsLoggedIn) {
+        setIsLoggedIn(true);
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to save data. Please try again.');
       console.error('Error saving data:', error);
@@ -71,14 +62,14 @@ const LoginScreen = ({ setIsLoggedIn }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoid}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
             {/* Brand Logo Added Here */}
-            <Image 
+            <Image
               source={require('../../assets/images/Brand_Logo.png')}
               style={styles.logo}
               resizeMode="contain"
