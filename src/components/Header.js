@@ -46,12 +46,12 @@ const Header = ({
           {showBackButton ? (
             <TouchableOpacity onPress={handleBackPress} style={styles.iconButton}>
               {/* ✅ White Back Arrow */}
-              <Ionicons name="arrow-back" size={24} color="white" />
+              <Ionicons name="arrow-back" size={24} color="rgb(255, 107, 107)" />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={toggleSidebar} style={styles.iconButton}>
               {/* ✅ White Menu Icon */}
-              <Ionicons name="menu" size={24} color="white" />
+              <Ionicons name="menu" size={24} color="rgb(255, 107, 107)" />
             </TouchableOpacity>
           )}
         </View>
@@ -64,7 +64,7 @@ const Header = ({
         <View style={styles.rightSection}>
           <TouchableOpacity onPress={handleProfilePress} style={styles.iconButton}>
             {/* ✅ White Profile Icon */}
-            <Ionicons name="person" size={24} color="white" />
+            <Ionicons name="person" size={24} color="rgb(255, 107, 107)" />
           </TouchableOpacity>
         </View>
       </View>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 15,
-    backgroundColor: 'rgb(255, 107, 107)',
+    backgroundColor: 'rgb(255, 254, 248)',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     elevation: 2,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',   // ✅ Title now white
+    color: 'rgb(255, 107, 107)',   // ✅ Title now white
   },
   iconButton: {
     padding: 4,

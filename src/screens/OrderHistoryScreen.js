@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, Animated, Easing, Dimensions, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, Animated, Easing, Dimensions, Modal, ScrollView, TextInput, Alert } from 'react-native';
 import Header from '../components/Header';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,9 +13,14 @@ const OrderHistoryScreen = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [animatedValue] = useState(new Animated.Value(0));
 
-  // Modal state for user details viewing
+  // Modal state for user details viewing (Now receives full order for payment mode)
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
-  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
+
+  // Modal state for Help (notes + cancel)
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [helpNotes, setHelpNotes] = useState('');
+  const [currentOrderForHelp, setCurrentOrderForHelp] = useState(null);
 
   useEffect(() => {
     loadOrderHistory();
@@ -44,6 +49,14 @@ const OrderHistoryScreen = ({ navigation }) => {
     }
   };
 
+  const saveOrderHistory = async (newOrders) => {
+    try {
+      await AsyncStorage.setItem('orderHistory', JSON.stringify(newOrders));
+    } catch (error) {
+      console.error('Error saving order history:', error);
+    }
+  };
+
   const toggleOrder = (orderId) => {
     if (expandedOrderId === orderId) {
       setExpandedOrderId(null);
@@ -63,33 +76,42 @@ const OrderHistoryScreen = ({ navigation }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Delivered': return '#10B981';
-      case 'Processing': return '#F59E0B';
-      case 'Cancelled': return '#EF4444';
-      default: return '#6B7280';
+      case 'Delivered':
+        return '#10B981';
+      case 'Processing':
+        return '#F59E0B';
+      case 'Cancelled':
+        return '#EF4444';
+      default:
+        return '#6B7280';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'Delivered': return 'checkmark-circle';
-      case 'Processing': return 'time';
-      case 'Cancelled': return 'close-circle';
-      default: return 'ellipse';
+      case 'Delivered':
+        return 'checkmark-circle';
+      case 'Processing':
+        return 'time';
+      case 'Cancelled':
+        return 'close-circle';
+      default:
+        return 'ellipse';
     }
   };
 
   const filterOrders = () => {
     if (activeFilter === 'all') return orders;
-    return orders.filter(order => order.status === activeFilter);
+    return orders.filter((order) => order.status === activeFilter);
   };
 
-  const onPressViewDetails = (userDetails) => {
-    if (userDetails) {
-      setSelectedUserDetails(userDetails);
+  // Updated: Pass whole order object to show paymentMode too
+  const onPressViewDetails = (order) => {
+    if (order) {
+      setSelectedOrderDetails(order);
       setShowUserDetailsModal(true);
     } else {
-      alert('No user details available for this order.');
+      alert('No details available for this order.');
     }
   };
 
@@ -98,6 +120,47 @@ const OrderHistoryScreen = ({ navigation }) => {
     if (!address || typeof address !== 'object') return '-';
     const parts = [address.plot, address.street, address.landmark, address.area].filter(Boolean);
     return parts.length > 0 ? parts.join(', ') : '-';
+  };
+
+  // Handle Help button press - open modal with notes + cancel option
+  const onPressHelp = (order) => {
+    setCurrentOrderForHelp(order);
+    setHelpNotes('');
+    setShowHelpModal(true);
+  };
+
+  // Handle Cancel Order button press in Help modal
+  const onCancelOrder = () => {
+    if (!currentOrderForHelp) return;
+
+    if (currentOrderForHelp.status === 'Processing') {
+      // Update the order status to Cancelled in state and AsyncStorage
+      const updatedOrders = orders.map((order) => {
+        if (order.id === currentOrderForHelp.id) {
+          return {
+            ...order,
+            status: 'Cancelled',
+            cancelNotes: helpNotes.trim() || null,
+          };
+        }
+        return order;
+      });
+      setOrders(updatedOrders);
+      saveOrderHistory(updatedOrders);
+      Alert.alert('Order Cancelled', 'Your order has been cancelled successfully.');
+      setShowHelpModal(false);
+      setCurrentOrderForHelp(null);
+      setHelpNotes('');
+    } else {
+      Alert.alert('Cannot Cancel Order', 'Only orders with status "Processing" can be cancelled.');
+    }
+  };
+
+  // Handle Back button press in Help modal
+  const onHelpBack = () => {
+    setShowHelpModal(false);
+    setCurrentOrderForHelp(null);
+    setHelpNotes('');
   };
 
   const renderOrderItem = ({ item }) => {
@@ -129,21 +192,10 @@ const OrderHistoryScreen = ({ navigation }) => {
             </View>
             <View style={styles.headerRight}>
               <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status)}15` }]}>
-                <Ionicons
-                  name={getStatusIcon(item.status)}
-                  size={14}
-                  color={getStatusColor(item.status)}
-                  style={styles.statusIcon}
-                />
-                <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-                  {item.status}
-                </Text>
+                <Ionicons name={getStatusIcon(item.status)} size={14} color={getStatusColor(item.status)} style={styles.statusIcon} />
+                <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>{item.status}</Text>
               </View>
-              <Ionicons
-                name={isExpanded ? "chevron-up" : "chevron-down"}
-                size={20}
-                color="#6B7280"
-              />
+              <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color="#6B7280" />
             </View>
           </View>
 
@@ -161,7 +213,9 @@ const OrderHistoryScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.orderFooter}>
-            <Text style={styles.itemsCount}>{item.items.length} item{item.items.length !== 1 ? 's' : ''}</Text>
+            <Text style={styles.itemsCount}>
+              {item.items.length} item{item.items.length !== 1 ? 's' : ''}
+            </Text>
             <Text style={styles.orderTotal}>₹{(item.total ?? 0).toLocaleString('en-IN')}</Text>
           </View>
         </TouchableOpacity>
@@ -173,7 +227,9 @@ const OrderHistoryScreen = ({ navigation }) => {
               <View key={index} style={styles.productItem}>
                 <Image source={{ uri: product.image }} style={styles.productImage} />
                 <View style={styles.productDetails}>
-                  <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
+                  <Text style={styles.productName} numberOfLines={1}>
+                    {product.name}
+                  </Text>
                   <View style={styles.productMeta}>
                     <Text style={styles.productPrice}>₹{(product.price ?? 0).toLocaleString('en-IN')}</Text>
                     <Text style={styles.productQuantity}>Qty: {product.quantity}</Text>
@@ -202,14 +258,10 @@ const OrderHistoryScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={[styles.actionButton, styles.reorderButton]}>
-                <Ionicons name="cart" size={16} color="#FFFFFF" />
-                <Text style={styles.reorderButtonText}>Reorder</Text>
+              <TouchableOpacity style={[styles.actionButton, styles.reorderButton]} onPress={() => onPressHelp(item)}>
+                <Text style={styles.reorderButtonText}>Cancel Order</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.detailsButton]}
-                onPress={() => onPressViewDetails(item.userDetails)}
-              >
+              <TouchableOpacity style={[styles.actionButton, styles.detailsButton]} onPress={() => onPressViewDetails(item)}>
                 <Ionicons name="document-text" size={16} color="#3B82F6" />
                 <Text style={styles.detailsButtonText}>View Details</Text>
               </TouchableOpacity>
@@ -244,10 +296,7 @@ const OrderHistoryScreen = ({ navigation }) => {
           </View>
           <Text style={styles.emptyTitle}>No orders yet</Text>
           <Text style={styles.emptyText}>Your order history will appear here once you make a purchase</Text>
-          <TouchableOpacity
-            style={styles.continueShoppingButton}
-            onPress={() => navigation.navigate('Home')}
-          >
+          <TouchableOpacity style={styles.continueShoppingButton} onPress={() => navigation.navigate('Home')}>
             <Text style={styles.continueShoppingText}>Start Shopping</Text>
           </TouchableOpacity>
         </View>
@@ -274,54 +323,75 @@ const OrderHistoryScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filterOrders()}
-        renderItem={renderOrderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      <FlatList data={filterOrders()} renderItem={renderOrderItem} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false} />
 
-      {/* Modal for user details */}
-      <Modal
-        visible={showUserDetailsModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowUserDetailsModal(false)}
-      >
+      {/* Modal for user & payment details */}
+      <Modal visible={showUserDetailsModal} animationType="slide" transparent={true} onRequestClose={() => setShowUserDetailsModal(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>User Details</Text>
+            <Text style={styles.modalTitle}>Order & User Details</Text>
             <ScrollView showsVerticalScrollIndicator={false}>
-              {selectedUserDetails ? (
+              {selectedOrderDetails ? (
                 <>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Full Name:</Text>
-                    <Text style={styles.detailValue}>{selectedUserDetails.fullName || '-'}</Text>
+                    <Text style={styles.detailValue}>{selectedOrderDetails.userDetails?.fullName || '-'}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Mobile:</Text>
-                    <Text style={styles.detailValue}>{selectedUserDetails.mobileNumber || '-'}</Text>
+                    <Text style={styles.detailValue}>{selectedOrderDetails.userDetails?.mobileNumber || '-'}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Email:</Text>
-                    <Text style={styles.detailValue}>{selectedUserDetails.email || '-'}</Text>
+                    <Text style={styles.detailValue}>{selectedOrderDetails.userDetails?.email || '-'}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Delivery Address:</Text>
-                    <Text style={styles.detailValue}>{formatAddress(selectedUserDetails.address)}</Text>
+                    <Text style={styles.detailValue}>{formatAddress(selectedOrderDetails.userDetails?.address)}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Payment Mode:</Text>
+                    <Text style={styles.detailValue}>{selectedOrderDetails.paymentMode || '-'}</Text>
                   </View>
                 </>
               ) : (
-                <Text style={styles.noDetailsText}>No user details available for this order.</Text>
+                <Text style={styles.noDetailsText}>No details available for this order.</Text>
               )}
             </ScrollView>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setShowUserDetailsModal(false)}
-            >
+            <TouchableOpacity style={styles.closeButton} onPress={() => setShowUserDetailsModal(false)}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal for Help (Notes input + Back + Cancel Order) */}
+      <Modal visible={showHelpModal} animationType="slide" transparent={true} onRequestClose={() => setShowHelpModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Help - Notes</Text>
+            <TextInput
+              style={styles.notesInput}
+              placeholder="Enter your notes here..."
+              multiline
+              numberOfLines={4}
+              value={helpNotes}
+              onChangeText={setHelpNotes}
+              textAlignVertical="top"
+              spellCheck={false}
+            />
+            <View style={styles.helpModalButtons}>
+              <TouchableOpacity style={[styles.helpButton, styles.backButton]} onPress={onHelpBack}>
+                <Text style={styles.helpButtonText}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.helpButton, currentOrderForHelp?.status === 'Processing' ? styles.cancelButtonActive : styles.cancelButtonDisabled]}
+                onPress={onCancelOrder}
+                disabled={currentOrderForHelp?.status !== 'Processing'}
+              >
+                <Text style={styles.helpButtonText}>Cancel Order</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -330,7 +400,7 @@ const OrderHistoryScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  // unchanged styles (same as your code)...
+  // existing styles as provided by user unchanged:
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   listContainer: { padding: 16, paddingBottom: 24 },
   filterContainer: { flexDirection: 'row', paddingHorizontal: 16, marginBottom: 8, marginTop: 10, gap: 1 },
@@ -372,9 +442,9 @@ const styles = StyleSheet.create({
   totalValue: { fontSize: 16, fontWeight: '700', color: '#059669' },
   actionButtons: { flexDirection: 'row', gap: 12, marginTop: 20 },
   actionButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 12, gap: 8 },
-  reorderButton: { backgroundColor: 'rgb(255, 107, 107)' },
+  reorderButton: { borderWidth: 1, borderColor: 'rgb(255, 107, 107)', borderRadius: 12 },
   detailsButton: { backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' },
-  reorderButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
+  reorderButtonText: { color: 'rgb(255, 107, 107)', fontSize: 14, fontWeight: '600' },
   detailsButtonText: { color: '#3B82F6', fontSize: 14, fontWeight: '600' },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 },
   emptyIcon: { backgroundColor: '#F9FAFB', padding: 24, borderRadius: 100, marginBottom: 24 },
@@ -394,6 +464,42 @@ const styles = StyleSheet.create({
   noDetailsText: { fontSize: 16, color: '#6B7280', textAlign: 'center', marginVertical: 20 },
   closeButton: { marginTop: 10, paddingVertical: 14, backgroundColor: 'rgb(255, 107, 107)', borderRadius: 12, alignItems: 'center' },
   closeButtonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+
+  notesInput: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 24,
+    minHeight: 100,
+    backgroundColor: '#FAFAFA',
+  },
+  helpModalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  helpButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  backButton: {
+    backgroundColor: '#9CA3AF', // grey
+  },
+  cancelButtonActive: {
+    backgroundColor: 'rgb(255, 107, 107)', // red
+  },
+  cancelButtonDisabled: {
+    backgroundColor: '#FCA5A5', // light red
+  },
+  helpButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
 });
 
 export default OrderHistoryScreen;

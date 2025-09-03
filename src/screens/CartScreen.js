@@ -10,7 +10,7 @@ const CartScreen = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
 
-  // User details state for form
+  // User details form
   const [showDetailsForm, setShowDetailsForm] = useState(false);
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -20,12 +20,15 @@ const CartScreen = ({ navigation }) => {
   const [landmark, setLandmark] = useState('');
   const [area, setArea] = useState('');
 
+  // Payment modal & selection
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadCartItems();
     });
     loadCartItems();
-    // Load user data (name, mobile) from AsyncStorage
     loadUserData();
     return unsubscribe;
   }, [navigation]);
@@ -59,12 +62,10 @@ const CartScreen = ({ navigation }) => {
 
   const updateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
-
     const updatedItems = cartItems.map(item =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     );
     setCartItems(updatedItems);
-
     try {
       await AsyncStorage.setItem('cartItems', JSON.stringify(updatedItems));
     } catch (error) {
@@ -127,7 +128,6 @@ const CartScreen = ({ navigation }) => {
     return 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
   };
 
-  // Validate form
   const validateDetailsForm = () => {
     if (!fullName.trim()) {
       Alert.alert('Validation Error', 'Please enter your full name');
@@ -160,9 +160,17 @@ const CartScreen = ({ navigation }) => {
     setShowDetailsForm(true);
   };
 
-  const submitOrder = async () => {
+  const onPressProceedToPayment = () => {
     if (!validateDetailsForm()) return;
+    setShowDetailsForm(false);
+    setShowPaymentModal(true);
+  };
 
+  const submitOrder = async () => {
+    if (!selectedPaymentMethod) {
+      Alert.alert("Payment Required", "Please select a payment method.");
+      return;
+    }
     const subtotal = calculateSubtotal();
     const discountAmount = (subtotal * discount) / 100;
     const total = calculateTotal();
@@ -176,6 +184,7 @@ const CartScreen = ({ navigation }) => {
       deliveryFee: 40,
       total: total + 40,
       status: 'Processing',
+      paymentMode: selectedPaymentMethod,
       userDetails: {
         fullName,
         mobileNumber,
@@ -192,19 +201,17 @@ const CartScreen = ({ navigation }) => {
     try {
       const existingOrders = await AsyncStorage.getItem('orderHistory');
       let orders = [];
-
       if (existingOrders !== null) {
         orders = JSON.parse(existingOrders);
       }
-
-      orders.unshift(order); 
+      orders.unshift(order);
       await AsyncStorage.setItem('orderHistory', JSON.stringify(orders));
-
       await AsyncStorage.removeItem('cartItems');
       setCartItems([]);
 
       setShowDetailsForm(false);
-
+      setShowPaymentModal(false);
+      setSelectedPaymentMethod('');
       setFullName('');
       setMobileNumber('');
       setEmail('');
@@ -315,7 +322,7 @@ const CartScreen = ({ navigation }) => {
 
         {/* Checkout Button */}
         <TouchableOpacity style={styles.checkoutButton} onPress={onPressProceedToCheckout}>
-          <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
+          <Text style={styles.checkoutButtonText}>Order Now</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -326,7 +333,7 @@ const CartScreen = ({ navigation }) => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Modal for user details form */}
+      {/* Modal for details form */}
       <Modal
         visible={showDetailsForm}
         animationType="slide"
@@ -341,7 +348,6 @@ const CartScreen = ({ navigation }) => {
             <Text style={styles.modalTitle}>Enter Your Details</Text>
             <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
-              {/* Full Name */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Full Name *</Text>
                 <TextInput
@@ -354,7 +360,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Mobile */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Mobile Number *</Text>
                 <TextInput
@@ -368,7 +373,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Email (Optional) */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Email ID (optional)</Text>
                 <TextInput
@@ -382,7 +386,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Plot / House Number */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Plot / House Number *</Text>
                 <TextInput
@@ -394,7 +397,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Street / Lane */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Street / Lane *</Text>
                 <TextInput
@@ -406,7 +408,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Landmark */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Landmark *</Text>
                 <TextInput
@@ -418,7 +419,6 @@ const CartScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Area / Locality */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Area / Locality</Text>
                 <TextInput
@@ -439,13 +439,65 @@ const CartScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalButton, styles.submitButton]}
-                  onPress={submitOrder}
+                  onPress={onPressProceedToPayment} // Proceed to payment modal
                 >
-                  <Text style={styles.modalButtonText}>Place Order</Text>
+                  <Text style={styles.modalButtonText}>Next</Text>
                 </TouchableOpacity>
               </View>
-
             </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Payment Method Modal */}
+      <Modal
+        visible={showPaymentModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowPaymentModal(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Select Payment Method</Text>
+
+            <TouchableOpacity 
+              style={[styles.paymentOption, selectedPaymentMethod === 'UPI' && styles.paymentOptionSelected]}
+              onPress={() => setSelectedPaymentMethod('UPI')}
+            >
+              <Text style={styles.paymentOptionText}>UPI</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.paymentOption, selectedPaymentMethod === 'Cash on Delivery' && styles.paymentOptionSelected]}
+              onPress={() => setSelectedPaymentMethod('Cash on Delivery')}
+            >
+              <Text style={styles.paymentOptionText}>Cash on Delivery</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.paymentOption, selectedPaymentMethod === 'Card' && styles.paymentOptionSelected]}
+              onPress={() => setSelectedPaymentMethod('Card')}
+            >
+              <Text style={styles.paymentOptionText}>Card</Text>
+            </TouchableOpacity>
+
+            <View style={styles.modalButtonsContainer}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setShowPaymentModal(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.submitButton]}
+                onPress={submitOrder}
+              >
+                <Text style={styles.modalButtonText}>Order Now</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -480,21 +532,26 @@ const styles = StyleSheet.create({
   totalRow: { borderTopWidth: 1, borderTopColor: '#e5e7eb', paddingTop: 16, marginTop: 8 },
   totalLabel: { fontSize: 18, fontWeight: 'bold', color: '#374151' },
   totalValue: { fontSize: 20, fontWeight: 'bold', color: '#059669' },
-  checkoutButton: { backgroundColor: 'rgb(255,107,107)', marginHorizontal: 16, marginBottom: 16, padding: 18, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, elevation: 3 },
+  checkoutButton: { backgroundColor: 'rgb(255,107,107)', marginHorizontal: 46, marginBottom: 16, padding: 18, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, elevation: 3 },
   checkoutButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  continueShoppingButton: { backgroundColor: '#fff', borderWidth: 1, borderColor: 'rgb(255, 107, 107)', marginHorizontal: 16, marginBottom: 24, padding: 16, borderRadius: 12, alignItems: 'center' },
+  continueShoppingButton: { backgroundColor: '#fff', borderWidth: 1, borderColor: 'rgb(255, 107, 107)', marginHorizontal: 46, marginBottom: 24, padding: 16, borderRadius: 12, alignItems: 'center' },
   continueShoppingText: { color: 'rgb(255, 107, 107)', fontSize: 16, fontWeight: '600' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'center', paddingHorizontal: 18 },
   modalContainer: { backgroundColor: '#fff', borderRadius: 16, padding: 24, maxHeight: '85%', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 10, elevation: 10 },
-  modalTitle: { fontSize: 22, fontWeight: '700', color: '#1f2937', marginBottom: 20, textAlign: 'center' },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: '#1f2937', marginBottom: 20, textAlign: 'center' },
   inputGroup: { marginBottom: 16 },
   inputLabel: { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 6 },
-  input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 12, paddingVertical: 14, paddingHorizontal: 16, fontSize: 16, color: '#111827', backgroundColor: '#f9fafb', elevation: 2 },
+  input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 12, paddingVertical: 10, paddingHorizontal: 16, fontSize: 16, color: '#111827', backgroundColor: '#f9fafb', elevation: 2 },
   modalButtonsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 14 },
   modalButton: { flex: 1, paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginHorizontal: 6 },
   cancelButton: { backgroundColor: '#9ca3af' },
   submitButton: { backgroundColor: 'rgb(255,107,107)' },
   modalButtonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+
+  // Payment modal styles
+  paymentOption: { padding: 16, borderRadius: 12, backgroundColor: '#f9fafb', marginBottom: 12, borderWidth: 1, borderColor: '#d1d5db', alignItems: 'center' },
+  paymentOptionSelected: { borderColor: 'rgb(0, 0, 0)', backgroundColor: 'rgb(130, 255, 108)' },
+  paymentOptionText: { fontSize: 16, fontWeight: '600', color: '#374151' },
 });
 
 export default CartScreen;

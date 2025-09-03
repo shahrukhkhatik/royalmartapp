@@ -33,22 +33,22 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const popularProducts = [
-  { id: 1, name: 'Organic Wheat', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkT7Jir3eQuxbUJRjtF1MJ87hmVxaf_XwCPQ&s' },
-  { id: 2, name: 'Fresh Milk', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40148717_4-akshayakalpa-amrutha-a2-farm-fresh-milk-organic.jpg' },
-  { id: 3, name: 'Whole Wheat Bread', category: 'Bakery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-  { id: 4, name: 'Orange Juice', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
-  { id: 5, name: 'Basmati Rice', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW2bcJj8jgiZ9THfbu_1LfQimB_t3hl_yejQ&s' },
-  { id: 6, name: 'Honey', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9vidPJnZtlT7If35oElKJN6GjltGJMI4Nw&s' },
-  { id: 7, name: 'Tomato Ketchup', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/xl/40029538_39-kissan-fresh-tomato-ketchup.jpg' },
-  { id: 8, name: 'Potato Chips', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZIzxgXwrWGSUq58no9DKLNQQFrg-MhZyoXw&s' },
-  { id: 9, name: 'Cooking Oil', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTRaHF6kdjaJHnlR-VSj6Lrz1Qm6p-yeXzEw&s' },
-  { id: 10, name: 'Butter', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://5.imimg.com/data5/QS/RE/GLADMIN-45635670/amul-butter-500x500.png' },
-  { id: 11, name: 'Pasta', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40180804_7-maggi-pazzta-masala-penne-family-saver-pack.jpg' },
-  { id: 12, name: 'Tea', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cdn.shopify.com/s/files/1/1498/3056/files/homeDarjImg.jpg?v=1629298964' },
-  { id: 13, name: 'Coffee', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images-cdn.ubuy.co.in/67470f2347239015f14dd59c-nescafe-clasico-instant-coffee.jpg' },
-  { id: 14, name: 'Biscuits', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_304/NI_CATALOG/IMAGES/CIW/2025/4/21/6405bd22-5117-4ac9-928b-8ed0198ce4cf_2405_1.png' },
-  { id: 15, name: 'Shampoo', category: 'Personal Care', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/hds/hds94959/y/24.jpg' },
-];
+    { id: 1, name: 'Organic Wheat', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkT7Jir3eQuxbUJRjtF1MJ87hmVxaf_XwCPQ&s' },
+    { id: 2, name: 'Fresh Milk', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40148717_4-akshayakalpa-amrutha-a2-farm-fresh-milk-organic.jpg' },
+    { id: 3, name: 'Whole Wheat Bread', category: 'Bakery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 4, name: 'Orange Juice', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+    { id: 5, name: 'Basmati Rice', category: 'Grains', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW2bcJj8jgiZ9THfbu_1LfQimB_t3hl_yejQ&s' },
+    { id: 6, name: 'Honey', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9vidPJnZtlT7If35oElKJN6GjltGJMI4Nw&s' },
+    { id: 7, name: 'Tomato Ketchup', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/xl/40029538_39-kissan-fresh-tomato-ketchup.jpg' },
+    { id: 8, name: 'Potato Chips', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZIzxgXwrWGSUq58no9DKLNQQFrg-MhZyoXw&s' },
+    { id: 9, name: 'Cooking Oil', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTRaHF6kdjaJHnlR-VSj6Lrz1Qm6p-yeXzEw&s' },
+    { id: 10, name: 'Butter', category: 'Dairy', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://5.imimg.com/data5/QS/RE/GLADMIN-45635670/amul-butter-500x500.png' },
+    { id: 11, name: 'Pasta', category: 'Grocery', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://www.bbassets.com/media/uploads/p/l/40180804_7-maggi-pazzta-masala-penne-family-saver-pack.jpg' },
+    { id: 12, name: 'Tea', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cdn.shopify.com/s/files/1/1498/3056/files/homeDarjImg.jpg?v=1629298964' },
+    { id: 13, name: 'Coffee', category: 'Beverages', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://images-cdn.ubuy.co.in/67470f2347239015f14dd59c-nescafe-clasico-instant-coffee.jpg' },
+    { id: 14, name: 'Biscuits', category: 'Snacks', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_304/NI_CATALOG/IMAGES/CIW/2025/4/21/6405bd22-5117-4ac9-928b-8ed0198ce4cf_2405_1.png' },
+    { id: 15, name: 'Shampoo', category: 'Personal Care', originalPrice: '₹4999', price: '₹199', discount: '45% (120)', image: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/hds/hds94959/y/24.jpg' },
+  ];
 
   // Load cart items from AsyncStorage on component mount
   useEffect(() => {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   viewAllButton: {
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   },
   popularProductCard: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(255, 254, 248)',
     borderRadius: 12,
     marginBottom: 16,
     padding: 10,

@@ -40,9 +40,10 @@ function MainTabNavigator({ setIsLoggedIn }) {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'rgb(255, 107, 107)',
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: 'rgb(255, 107, 107)',
         tabBarStyle: {
           height: 80,
+          backgroundColor: 'rgb(255, 254, 248)',
         }
       })}
     >

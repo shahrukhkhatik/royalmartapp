@@ -71,7 +71,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
 
           {/* Gradient Header */}
           <LinearGradient
-            colors={['#FF6A0087', '#FF3B3BF5']}
+            colors={['#ffd4b5', '#FF3B3BF5']}
             style={styles.headerGradient}
           >
             <View style={styles.header}>
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    marginTop: 40,
   },
   keyboardAvoid: {
     flex: 1,
@@ -153,9 +154,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   headerGradient: {
-    height: 250,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+    height: 280,
+    borderBottomLeftRadius: 70,
+    borderBottomRightRadius: 70,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -163,8 +164,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
     tintColor: '#ffffff',
   },
   headerText: {
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   },
   form: {
     padding: 30,
-    marginTop: 35,
+    marginTop: 30,
   },
   inputContainer: {
     marginBottom: 28,
