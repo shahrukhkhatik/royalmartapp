@@ -36,12 +36,12 @@ const SubCategoryScreen = ({ route, navigation }) => {
           { id: 206, name: 'Cow Milk', category: 'Dairy & Eggs', originalPrice: '₹89', price: '₹69', discount: '22% OFF', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
         ],
         3: [
-          { id: 301, name: 'Fresh Chicken', category: 'Meat & Fish', originalPrice: '₹299', price: '₹249', discount: '17% OFF', image: 'https://www.shutterstock.com/shutterstock/videos/3687266627/thumb/8.jpg?ip=x480' },
-          { id: 302, name: 'Poultry Chicken', category: 'Meat & Fish', originalPrice: '₹349', price: '₹279', discount: '20% OFF', image: 'https://www.chikplaza.com/wp-content/uploads/2017/08/Chicken-Whole-Boiler-Full_STP3512.jpg' },
-          { id: 303, name: 'Seafood', category: 'Meat & Fish', originalPrice: '₹499', price: '₹399', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgIJNJoZAbCTuSpKgvAixO-8wlyOQM7HhE7A&s' },
-          { id: 304, name: 'Processed Meat', category: 'Meat & Fish', originalPrice: '₹199', price: '₹159', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_TXvdOF8yMPC9ExggmauVSElL7Jxfme1tYw&s' },
-          { id: 305, name: 'Frozen Meat', category: 'Meat & Fish', originalPrice: '₹299', price: '₹239', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAD1wHnAxWgOkN51LWj2_MfUyr-Re3j61Hdw&s' },
-          { id: 306, name: 'Organic Meat', category: 'Meat & Fish', originalPrice: '₹399', price: '₹349', discount: '13% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW9vvosHyZYD8gHwLBLlS_n41GOqSj_fas-A&s' },
+          { id: 301, name: 'Fresh Chicken', category: 'Meat & Seafood', originalPrice: '₹299', price: '₹249', discount: '17% OFF', image: 'https://www.shutterstock.com/shutterstock/videos/3687266627/thumb/8.jpg?ip=x480' },
+          { id: 302, name: 'Poultry Chicken', category: 'Meat & Seafood', originalPrice: '₹349', price: '₹279', discount: '20% OFF', image: 'https://www.chikplaza.com/wp-content/uploads/2017/08/Chicken-Whole-Boiler-Full_STP3512.jpg' },
+          { id: 303, name: 'Seafood', category: 'Meat & Seafood', originalPrice: '₹499', price: '₹399', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgIJNJoZAbCTuSpKgvAixO-8wlyOQM7HhE7A&s' },
+          { id: 304, name: 'Processed Meat', category: 'Meat & Seafood', originalPrice: '₹199', price: '₹159', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_TXvdOF8yMPC9ExggmauVSElL7Jxfme1tYw&s' },
+          { id: 305, name: 'Frozen Meat', category: 'Meat & Seafood', originalPrice: '₹299', price: '₹239', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAD1wHnAxWgOkN51LWj2_MfUyr-Re3j61Hdw&s' },
+          { id: 306, name: 'Organic Meat', category: 'Meat & Seafood', originalPrice: '₹399', price: '₹349', discount: '13% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW9vvosHyZYD8gHwLBLlS_n41GOqSj_fas-A&s' },
         ],
         4: [
           { id: 401, name: 'Fresh Bread', category: 'Bakery', originalPrice: '₹49', price: '₹39', discount: '20% OFF', image: 'https://www.rockrecipes.com/wp-content/uploads/2008/01/DSC_0221-4.jpg' },
@@ -51,11 +51,32 @@ const SubCategoryScreen = ({ route, navigation }) => {
           { id: 405, name: 'Donuts', category: 'Bakery', originalPrice: '₹79', price: '₹59', discount: '25% OFF', image: 'https://images.unsplash.com/photo-1551106652-a5bcf4b29ab6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
           { id: 406, name: 'Artisan Bread', category: 'Bakery', originalPrice: '₹99', price: '₹79', discount: '20% OFF', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
         ],
-        // -----------------------------
-        // आप बाकी categories (5,6,7) को भी इसी तरह update कर सकते हैं  
-        // हर item में category, price, originalPrice, discount add करना है
-        // -----------------------------
-      };
+        5: [
+          { id: 501, name: 'Soft Drinks', category: 'Drinks', originalPrice: '₹79', price: '₹59', discount: '25% OFF', image: 'https://images.unsplash.com/photo-1510626176961-4b57d4fbad03?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
+          { id: 502, name: 'Fruit Juices', category: 'Drinks', originalPrice: '₹99', price: '₹79', discount: '20% OFF', image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/NI_CATALOG/IMAGES/CIW/2025/5/16/3b819446-a93b-4839-89c4-8f75bdb0dcc0_344_1.png' },
+          { id: 503, name: 'Energy Drinks', category: 'Drinks', originalPrice: '₹149', price: '₹119', discount: '20% OFF', image: 'https://tiimg.tistatic.com/fp/1/008/585/energy-drink-250-ml-368.jpg' },
+          { id: 504, name: 'Coffee', category: 'Drinks', originalPrice: '₹199', price: '₹149', discount: '25% OFF', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
+          { id: 505, name: 'Tea', category: 'Drinks', originalPrice: '₹129', price: '₹99', discount: '23% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIKW0hDZrL0AuTFpzcoqY7tRzxlIgwb5tbpw&s' },
+          { id: 506, name: 'Mocktails', category: 'Drinks', originalPrice: '₹199', price: '₹159', discount: '20% OFF', image: 'https://savortheflavour.com/wp-content/uploads/2020/07/Blue-Lagoon-Mocktail-Tasty.jpg' },
+        ],
+        6: [
+          { id: 601, name: 'Chips', category: 'Snacks', originalPrice: '₹49', price: '₹39', discount: '20% OFF', image: 'https://images-cdn.ubuy.co.in/679419253b48a803c65f7223-lays-classic-potato-chips-15-25-oz-bag.jpg' },
+          { id: 602, name: 'Namkeen', category: 'Snacks', originalPrice: '₹79', price: '₹59', discount: '25% OFF', image: 'https://www.haldiramuk.com/cdn/shop/files/0000s_0002_fop-220g_5c0428c5-d9bb-449b-b13b-3977a2a3cab4.png?v=1718874410' },
+          { id: 603, name: 'Biscuits', category: 'Snacks', originalPrice: '₹69', price: '₹49', discount: '28% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxjbswF9S7GNiJjDCDNZiVJ98LTZOdiK-4YA&s' },
+          { id: 604, name: 'Chocolates', category: 'Snacks', originalPrice: '₹129', price: '₹99', discount: '23% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTygWTv4FQoBtH3KLTcy4H2RA44ZA0vbvQOBw&s' },
+          { id: 605, name: 'Popcorn', category: 'Snacks', originalPrice: '₹99', price: '₹79', discount: '20% OFF', image: 'https://i0.wp.com/spainonafork.com/wp-content/uploads/2019/04/popcornHOR-11.png?fit=750%2C750&ssl=1' },
+          { id: 606, name: 'Mixture', category: 'Snacks', originalPrice: '₹89', price: '₹69', discount: '22% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNa785C6dKieh_-f5FbYSYAN_vDMVcXjZabQ&s' },
+        ],
+        7: [
+          { id: 701, name: 'Frozen', category: 'Frozen Foods', originalPrice: '₹149', price: '₹119', discount: '20% OFF', image: 'https://www.foodrepublic.com/img/gallery/the-worlds-first-frozen-foods-date-back-thousands-of-years/intro-1684964181.jpg' },
+          { id: 702, name: 'Frozen Meat', category: 'Frozen Foods', originalPrice: '₹399', price: '₹319', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyOW19VHWyeWCuCbizPWR0bszBKyISEX5Iow&s' },
+          { id: 703, name: 'Ice Creams', category: 'Frozen Foods', originalPrice: '₹249', price: '₹199', discount: '20% OFF', image: 'https://www.allrecipes.com/thmb/SI6dn__pfJb9G5eBpYAqkyGCLxQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50050-five-minute-ice-cream-DDMFS-4x3-076-fbf49ca6248e4dceb3f43a4f02823dd9.jpg' },
+          { id: 704, name: 'Frozen Snacks', category: 'Frozen Foods', originalPrice: '₹299', price: '₹229', discount: '23% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvzsW0VTtEZnX7zhAYBdZUrQgARnwvGeR_Cg&s' },
+          { id: 705, name: 'Frozen Desserts', category: 'Frozen Foods', originalPrice: '₹349', price: '₹269', discount: '23% OFF', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
+          { id: 706, name: 'Frozen Ready Meals', category: 'Frozen Foods', originalPrice: '₹399', price: '₹319', discount: '20% OFF', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfHWAod7yXIYYWzS6AlmtLSHLtNvfRI_zIig&s' },
+        ],
+      }
+
 
       setSubCategories(subCategoriesData[categoryId] || []);
     };

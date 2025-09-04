@@ -60,6 +60,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     if (screen === 'Logout') {
       // Handle logout logic
       navigation.navigate('Profile');
+      AsyncStorage.getItem('orderHistory');
     }
     else{
       navigation.navigate('Profile');
